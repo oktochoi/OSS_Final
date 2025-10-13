@@ -41,8 +41,10 @@ export default function Sidebar() {
           <span>알림</span>
         </li>
         <li className={styles.nomobileOnly}>
+          <Link to= "/create" className={styles.link}> 
           <img src="as.png" alt="만들기" className={styles.icon} />
           <span>만들기</span>
+          </Link>
         </li>
         <li>
           <Link to="/mypage" className={styles.link}>

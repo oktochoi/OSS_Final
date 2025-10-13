@@ -1,89 +1,70 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import Sidebar from '../components/Sidebar'
-import PostGallery from '../components/PostGallery'
-import PostModal from '../components/PostModal'
-import styles from '../styles/Mypage.module.css'
-import { useUserStore } from '../store/userStore'
+import { useState } from 'react';
+import Sidebar from '../components/Sidebar';
+import ImageModal from '../components/ImageModal';
+import styles from '../styles/Mypage.module.css';
+import { useUserStore } from '../store/userStore';
+import { Link } from 'react-router-dom';
 
-export default function MyPage() {
-  const nickname = useUserStore((state) => state.nickname)
-  const navigate = useNavigate()
+export default function HomePage() {
+  const { name, profileImage } = useUserStore();
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [likedImages, setLikedImages] = useState({});
 
-  const [likes, setLikes] = useState([
-    { liked: false, count: 701 },
-    { liked: false, count: 704 },
-    { liked: false, count: 708 },
-    { liked: false, count: 712 },
-    { liked: false, count: 715 },
-    { liked: false, count: 717 },
-    { liked: false, count: 719 },
-    { liked: false, count: 722 },
-    { liked: false, count: 726 },
-  ])
-
-  const [selectedPost, setSelectedPost] = useState(null)
-
-  const openModal = (path, index) => {
-    setSelectedPost({ path, index })
-  }
-
-  const closeModal = () => setSelectedPost(null)
-
-  const handleLike = (index) => {
-    setLikes((prev) => {
-      const updated = [...prev]
-      const item = updated[index]
-      updated[index] = {
-        liked: !item.liked,
-        count: item.liked ? item.count - 1 : item.count + 1,
-      }
-      return updated
-    })
-  }
-
-  const goToEditPage = () => {
-    navigate('/mypage/infoedit')
-  }
+  const toggleLike = (src) => {
+    setLikedImages((prev) => ({
+      ...prev,
+      [src]: !prev[src],
+    }));
+  };
 
   return (
     <div className={styles.pageWrapper}>
       <Sidebar />
-      <div className={styles.content}>
-        <div className={styles.profileHeader}>
-          <img
-            src="/Profile.jpeg"
-            className={styles.avatar}
-            alt="유저 아바타"
-          />
+      <main className={styles.main}>
+        <section className={styles.profileSection}>
+          <img src={profileImage} className={styles.avatar} alt="프로필" />
           <div className={styles.profileInfo}>
-            <div className={styles.usernameRow}>
-              <span className={styles.username}>{nickname}</span>
-              <button className={styles.editButton} onClick={goToEditPage}>
-                프로필 편집
-              </button>
-            </div>
-            <div className={styles.userStats}>
-              <span>게시물 9</span>
-              <span>팔로워 235</span>
-              <span>팔로우 240</span>
-            </div>
+            <h2>
+              <span className={styles.name}>{name || '닉네임없음'}</span>
+              <Link to="/info">
+                <button>프로필 편집</button>
+              </Link>
+            </h2>
+            <span className={styles.profileStat}>게시물 6 </span>
+            <span className={styles.profileStat}>팔로워 0 </span>
+            <span className={styles.profileStat}>팔로우 0 </span>
           </div>
-        </div>
+        </section>
 
-        <PostGallery likes={likes} onClick={openModal} />
+        <hr className={styles.divider} />
 
-        {selectedPost && (
-          <PostModal
-            image={selectedPost.path}
-            index={selectedPost.index}
-            liked={likes[selectedPost.index].liked}
-            count={likes[selectedPost.index].count}
-            onLike={() => handleLike(selectedPost.index)}
-            onClose={closeModal}
-          />
-        )}
-      </div>
+        <section className={styles.gridSection}>
+          <div className={styles.grid}>
+            {['/11.jpg', '/22.jpg', '/33.jpg', '4.jpg', '5.jpg', '6.jpg'].map((src, idx) => (
+              <div key={idx} className={styles.post} onClick={() => setSelectedImage(src)}>
+                <img src={src} alt={`게시물 ${idx + 1}`} />
+                <div className={styles.overlay}>
+                  <span className={styles.lc}>
+                    <img src={likedImages[src] ? 'reallove.svg' : 'love.svg'} alt="좋아요" /> 좋아요
+                  </span>
+                  <span className={styles.lc}>
+                    <img src="comments.svg" alt="댓글" /> 댓글
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </main>
+
+      {selectedImage && (
+        <ImageModal
+          src={selectedImage}
+          onClose={() => setSelectedImage(null)}
+          liked={likedImages[selectedImage] || false}
+          onLikeToggle={() => toggleLike(selectedImage)}
+        />
+      )}
     </div>
-  )
+  );
 }

@@ -1,6 +1,6 @@
 // src/pages/RegisterPage.js
 import { Link, useNavigate } from 'react-router-dom'
-import styles from './registerpage.module.css' // CSS 경로는 위치에 맞게 조정
+import styles from '../styles/registerpage.module.css' // CSS 경로는 위치에 맞게 조정
 import { useUserStore } from '../store/userStore'
 import { useState } from 'react'
 
@@ -18,7 +18,7 @@ export default function RegisterPage() {
     <div className={styles.background}>
       <div className={styles.container}>
         <div className={styles.card}>
-          <img src="instargramlogo1.png" className={styles.logo} alt="instagram logo" />
+          <img src="logo.png" className={styles.logo} alt="instagram logo" />
           <p className={styles.subtitle}>
             친구들의 사진과 동영상을 보려면 가입하세요.
           </p>

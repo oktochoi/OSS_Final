@@ -1,67 +1,65 @@
-import { Link } from "react-router-dom";
-import styles from "../styles/Sidebar.module.css";
+import { Link } from 'react-router-dom';
+import styles from '../styles/Sidebar.module.css';
 
 export default function Sidebar() {
   return (
-    <div className={styles.sidebar}>
-      {/* 데스크탑 전용 텍스트 로고 */}
-      <div className={`${styles.logo} ${styles.desktopOnly}`}>
-        <img
-          src="/Vector.png"
-          alt="Instagram 로고"
-          className={styles.logoImage}
-        />
-      </div>
-
-      {/* 모바일/태블릿용 아이콘 로고 */}
-      <div className={`${styles.logo} ${styles.mobileOnly}`}>
-        <img
-          src="/logo2.png"
-          alt="Instagram 아이콘 로고"
-          className={styles.logoImage}
-        />
-      </div>
+    <aside className={styles.sidebar}>
+      <img
+        src="logo.png"
+        alt="인스타그램 로고"
+        className={`${styles.logo} ${styles.desktopOnly}`}
+      />
+      <img
+        src="instalogo.png"
+        alt="인스타그램 아이콘"
+        className={`${styles.logo} ${styles.tabletOnly}`}
+      />
 
       <ul className={styles.menu}>
-        <li className={styles.menuItem}>
-          <img src="/Home.png" alt="홈" />
+        <li>
+          <img src="home.png" alt="홈" className={`${styles.icon} ${styles.mobileOnly}`} />
           <span>홈</span>
         </li>
-        <li className={styles.menuItem}>
-          <img src="/Navigation Icons.png" alt="검색" />
+        <li>
+          <img src="search.png" alt="검색" className={`${styles.icon} ${styles.mobileOnly}`} />
           <span>검색</span>
         </li>
-        <li className={styles.menuItem}>
-          <img src="/lelay.png" alt="릴스" />
+        <li>
+          <img
+            src="Navigation Icons.png"
+            alt="릴스"
+            className={`${styles.icon} ${styles.mobileOnly}`}
+          />
           <span>릴스</span>
         </li>
-        <li className={styles.menuItem}>
-          <img src="/Heart.png" alt="알림" />
-          <span>알림</span>
+        <li className={styles.nomobileOnly}>
+          <img src="Union.png" alt="메시지" className={styles.icon} />
+          <span>메시지</span>
         </li>
         <li>
-          <Link to="/mypage" className={styles.menuItem}>
-            <img src="/Avatar.png" alt="프로필" />
+          <img src="yes.png" alt="알림" className={`${styles.icon} ${styles.mobileOnly}`} />
+          <span>알림</span>
+        </li>
+        <li className={styles.nomobileOnly}>
+          <img src="as.png" alt="만들기" className={styles.icon} />
+          <span>만들기</span>
+        </li>
+        <li>
+          <Link to="/mypage" className={styles.link}>
+            <img src="Icons.png" alt="프로필" className={`${styles.icon} ${styles.mobileOnly}`} />
             <span>프로필</span>
           </Link>
         </li>
-
-        {/* 모바일에선 안 보임 */}
-        <li className={`${styles.menuItem} ${styles.hideOnMobile}`}>
-          <img src="/Union.png" alt="메시지" />
-          <span>메시지</span>
-        </li>
-        <li className={`${styles.menuItem} ${styles.hideOnMobile}`}>
-          <img src="/create.png" alt="만들기" />
-          <span>만들기</span>
-        </li>
       </ul>
 
-      {/* 더 보기 버튼도 모바일에선 숨김 */}
-      <div className={`${styles.menuItem} ${styles.more} ${styles.hideOnMobile}`}>
-        <img src="/3line.png" alt="더 보기" />
+      <div className={styles.more}>
+        <img
+          src="=.png"
+          alt="더 보기"
+          className={`${styles.moreicon} ${styles.nomobileOnly}`}
+        />
         <span>더 보기</span>
       </div>
-    </div>
+    </aside>
   );
 }

@@ -1,0 +1,118 @@
+.background {
+    width: 100vw;
+    height: 100vh;
+    background-color: black;
+  
+    display: flex;
+    justify-content: center;
+    align-items: center;  
+  }
+
+.container {
+    width: 349px;
+    height: auto;
+    background-color: black;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  
+  .card {
+    width: 349px;
+    height: 489px;
+    background-color: black;
+    border: 1px solid white;
+  }
+  
+  .logo {
+    width: 175px;
+    height: 49px;
+    margin-top: 40px;
+    margin-bottom: 30px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .subtitle {
+    font-size: 13px;
+    font-family: 'Inter';
+    color: #797979;
+    text-align: center;
+    font-weight: 900;
+    line-height: 100%;
+    margin-bottom: 40px;
+  }
+  
+  .form {
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+  }
+
+  .input {
+    width:268px;
+    height:37px;
+    font-weight: 500;
+    margin-left: 40px;
+    padding-left:10px;
+    background-color: black;
+    border: 1px solid #EAEAEA;
+    color: white;
+    border-radius: 1px;
+    font-size: 11px;
+    margin-bottom: 8px;
+  }
+  
+  .caption {
+    font-size: 11.4px;
+    color: #9ca3af;
+    text-align: center;
+    line-height: 1.4;
+    margin-top: 8px;
+  }
+  
+  .wantLink {
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  
+
+  
+  .button {
+    width: 268px;
+    height: 32px;
+    margin-left: 40px;
+    background-color: #7CBDFF;
+    color: white;
+    padding: 6px 0;
+    font-weight: bold;
+    border-radius: 8px;
+    border: none;
+  }
+  
+  .loginBox {
+    background-color: black;
+    border: 1px solid white;
+    width: 349px;
+    height: 69px;
+    text-align: center;
+    margin-top: 16px;
+  }
+  
+  .loginText {
+    color: white;
+    margin-top: 25px;
+    font-family: Inter;
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 100%;
+  }
+  
+  .loginLink {
+    text-decoration: none;   
+    color: #60a5fa;
+    font-weight: 600;
+    cursor: pointer;
+  }

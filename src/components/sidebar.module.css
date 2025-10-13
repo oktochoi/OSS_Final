@@ -1,0 +1,229 @@
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100vh;
+  background-color: black;
+  color: white;
+  border-right: 1px solid #4b5563;
+  padding: 16px;
+  z-index: 1000;
+  box-sizing: border-box;     /* ✅ 패딩과 테두리를 포함한 너비 계산 */
+  display: flex;             /* ✅ flex 컨테이너로 만들기 */
+  flex-direction: column;    /* ✅ 세로 정렬 */
+  border-right: 1px solid #262626;
+}
+
+  .logo {
+    width:92px;
+    height:26px;
+    padding-left: 10px;
+    margin-bottom: 20px;
+    margin-top: 30px;
+  }
+  
+  .menu {
+    padding: 0;
+    margin: 0;
+  }
+  
+  .menu li {
+    width:195px;
+    height:42px;
+    border-radius: 8px;
+    background-color:#161616 ;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: Inter;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .link{
+    width:195px;
+    height:42px;
+    border-radius: 8px;
+    color:white;
+    text-decoration: none;
+    background-color:#161616 ;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: Inter;
+    margin-top:3px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  
+  .icon {
+    width: 20px;
+    height: 20px;
+    margin-left:15px;
+    margin-right: 8px;
+  }
+  
+  .more {
+    margin-top: auto;
+    margin-bottom: 30px;
+  
+    width: 195px;
+    height: 42px;
+    border-radius: 8px;
+    background-color: #161616;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: Inter;
+  
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .more span {
+    margin-left: 16px; /* ✅ 띄어쓰기 제거! */
+    display: inline-block;
+    vertical-align: middle;
+  }
+  
+
+  .moreicon{
+    padding-left: 4px;
+    width:28px;
+    height:28px;
+
+  }
+
+  @media screen and (min-width: 1024px) {
+    .tabletOnly {
+      display: none;
+    }
+  
+    .desktopOnly {
+      display: block; /* 또는 inline-block, 이미지면 block 추천 */
+    }
+  }
+  
+
+  @media screen and (max-width: 1023px) {
+    .sidebar {
+      width: 72px; /* ✅ 좁은 사이드바 */
+      padding: 16px 8px;
+      align-items: center;  
+    }
+  
+    .logo {
+      width: 24px;
+      height: 24px;
+      padding-bottom: 30px;
+      margin-right:4px;
+    }
+
+    .desktopOnly {
+      display: none;
+    }
+  
+    .menu li,
+    .link,
+    .more {
+      width: 56px;
+      height: 48px;
+      padding: 0;
+      background-color: black;
+      justify-content: center;
+      border-radius: 12px;
+    }
+  
+    .icon{
+      width:22px;
+      height: 22px;
+    }
+    .moreicon {
+      margin: 0;
+      width: 28px;
+      height: 28px;
+    }
+  
+    .menu span,
+    .link span,
+    .more span {
+      display: none; /* ✅ 텍스트 감추기 */
+    }
+  }
+  
+
+  @media screen and (max-width: 639px) {
+    .sidebar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      top: auto;
+      width: 100%;
+      height: 60px;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+      border-top: 1px solid #262626;
+      border-right: none;
+      z-index: 1000;
+      background-color: black;
+    }
+  
+    .logo {
+      display: none;
+    }
+  
+    .menu {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  
+    .menu li {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      border-radius: 0; /* or keep if you like */
+    }
+  
+    .link {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      background-color: transparent;
+      padding: 0;
+      margin: 0;
+    }
+  
+    .more {
+      display: none; /* 하단 바에선 '더보기' 제거 */
+    }
+  
+    .nomobileOnly {
+      display: none !important;
+    }
+  
+    .menu span,
+    .link span,
+    .more span {
+      display: none;
+    }
+  
+    .icon,
+    .moreicon {
+      width: 28px;
+      height: 28px;
+    }
+  }
+  

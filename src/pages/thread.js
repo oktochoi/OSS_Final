@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from '../styles/CreatePost.module.css';
+import styles from '../styles/thread.module.css';
 
 export default function CreatePost() {
   const [title, setTitle] = useState('');

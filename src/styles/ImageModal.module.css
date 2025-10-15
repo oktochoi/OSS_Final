@@ -148,11 +148,11 @@
 
 .postContent {
   padding: 16px;
-  border-bottom: 1px solid #efefef;
+  border-bottom: 1px solid #faf8f8;
 }
 
 .postContent p {
   margin: 0;
   font-size: 14px;
-  color: #262626;
+  color: #a9a7a7;
 }

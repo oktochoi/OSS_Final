@@ -31,13 +31,48 @@ export default function HomePage() {
   const [threads, setThreads] = useState([]);
   const navigate = useNavigate();
 
-  // ❤️ 좋아요 토글
-  const toggleLike = (src) => {
+
+  const [likes, setLikes] = useState(
+    threads.reduce((acc, t) => {
+      acc[t.id] = t.likes || 0;
+      return acc;
+    }, {})
+  );
+
+  const [liked, setLiked] = useState({});         // 개별 포스트의 좋아요 여부
+  const [menuOpen, setMenuOpen] = useState(null); // 어떤 포스트의 메뉴가 열렸는지 추적
+
+  //이미지 좋아요 토글
+  const toggleImageLike = (src) => {
     setLikedImages((prev) => ({
       ...prev,
       [src]: !prev[src],
     }));
   };
+
+  //쓰레드 좋아요 토글
+  const toggleThreadLike = (id) => {
+    setLiked((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+
+    setLikes((prev) => ({
+      ...prev,
+      [id]: prev[id] + (liked[id] ? -1 : 1),  // 이미 눌려 있으면 -1, 아니면 +1
+    }));
+  };
+
+  const toggleMenu = (id) => {
+    setMenuOpen(menuOpen === id ? null : id);
+  };
+
+  //쓰레드 아이디 구별
+  const uniqueThreads = threads.filter(
+    (thread, index, self) =>
+      index === self.findIndex((t) => t.id === thread.id)
+  );
+
 
   // 📖 랜덤 성경구절
   useEffect(() => {
@@ -64,6 +99,41 @@ export default function HomePage() {
       console.error('Thread 불러오기 오류:', err);
     }
   };
+
+  // ✏ 쓰레드 수정
+const handleEditThread = async (id, updatedTitle, updatedContent) => {
+  try {
+    const res = await axios.put(`${THREAD_API}/${id}`, {
+      title: updatedTitle,
+      content: updatedContent,
+    });
+
+    setThreads((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, ...res.data } : t))
+    );
+
+    setMenuOpen(null);
+    alert('수정 완료 ✅');
+  } catch (err) {
+    console.error('수정 오류:', err);
+    alert('수정에 실패했습니다 😢');
+  }
+};
+
+
+// 🗑 쓰레드 삭제
+const handleDeleteThread = async (id) => {
+  try {
+    await axios.delete(`${THREAD_API}/${id}`);
+    setThreads((prev) => prev.filter((t) => t.id !== id));
+    setMenuOpen(null);
+    alert('삭제 완료 🗑');
+  } catch (err) {
+    console.error('삭제 오류:', err);
+    alert('삭제에 실패했습니다 😢');
+  }
+};
+
 
   useEffect(() => {
     if (viewMode === 'post') {
@@ -171,75 +241,133 @@ export default function HomePage() {
         )}
 
         {/* 🧵 최근 6개 Thread */}
-        {viewMode === 'thread' && (
-          <section className={styles.threadSection}>
-            {recentThreads.length === 0 ? (
-              <p className={styles.noThread}>Thread가 없습니다.</p>
-            ) : (
-              recentThreads.map((t) => {
-                const initials =
-                  t.isAnon === 'true' || t.isAnon === true
-                    ? '익명'
-                    : (t.author?.[0] ?? 'U');
-
-                return (
-                  <article key={t.id} className={styles.threadCard}>
-                    <div className={styles.threadHeader}>
-                      <div className={styles.threadAvatar}>{initials}</div>
-                      <div className={styles.threadMeta}>
-                        <span className={styles.threadAuthor}>{t.author}</span>
-                        <time className={styles.threadTime}>
-                          {new Date(t.createdAt).toLocaleString()}
-                        </time>
-                      </div>
-                      <button className={styles.threadMoreBtn}>⋯</button>
+   {viewMode === 'thread' && (
+        <section className={styles.threadSection}>
+          {uniqueThreads.length === 0 ? (
+            <p className={styles.noThread}>Thread가 없습니다.</p>
+          ) : (
+            uniqueThreads
+              .slice(-6)
+              .reverse()
+              .map((t) => (
+                <article key={t.id} className={styles.threadCard}>
+                  <div className={styles.threadHeader}>
+                    <div className={styles.threadAvatar}>
+                      {t.author ? t.author[0].toUpperCase() : 'A'}
                     </div>
+                    <div className={styles.threadMeta}>
+                      <span className={styles.threadAuthor}>{t.author}</span>
+                      <time className={styles.threadTime}>
+                        {new Date(t.createdAt).toLocaleString()}
+                      </time>
+                    </div>
+                    <div className={styles.moreWrapper}>
+                      <button
+                        className={styles.threadMoreBtn}
+                        onClick={() => toggleMenu(t.id)}
+                      >
+                        ⋯
+                      </button>
+                      {menuOpen === t.id && (
+                        <div className={styles.moreMenu}>
+                          <button
+                            onClick={() => {
+                              const updatedTitle = prompt('새로운 제목을 입력하세요', t.title);
+                              if (updatedTitle === null) return; // 취소하면 중단
 
-                    {t.title && <h3 className={styles.threadTitle}>{t.title}</h3>}
-                    <div className={styles.threadContent}>{t.content}</div>
+                              const updatedContent = prompt('수정할 내용을 입력하세요', t.content);
+                              if (updatedContent === null) return;
 
-                    <div className={styles.threadBadges}>
-                      {t.isAnon === 'true' || t.isAnon === true ? (
-                        <span className={`${styles.badge} ${styles.badgeAnon}`}>익명</span>
-                      ) : (
-                        <span className={styles.badge}>작성자</span>
+                              if (updatedTitle.trim() !== '' || updatedContent.trim() !== '') {
+                                handleEditThread(t.id, updatedTitle, updatedContent);
+                              }
+                            }}
+                            className={styles.menuItem}
+                          >
+                            ✏ 수정
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (window.confirm('정말 삭제하시겠습니까?')) {
+                                handleDeleteThread(t.id);
+                              }
+                            }}
+                            className={styles.menuItem}
+                          >
+                            🗑 삭제
+                          </button>
+                        </div>
+
                       )}
                     </div>
+                  </div>
 
-                    <div className={styles.threadActions}>
-                      <button className={styles.actionBtn}>
-                        <img src="love.svg" alt="" width="16" /> 좋아요 {t.likes ?? 0}
-                      </button>
-                      <button className={styles.actionBtn}>
-                        <img src="comments.svg" alt="" width="16" /> 댓글
-                      </button>
-                      <div className={styles.actionsSpacer} />
-                      <button className={styles.actionBtn}>↗ 공유</button>
-                    </div>
-                  </article>
-                );
-              })
-            )}
-            {threads.length > 0 && (
-              <div className={styles.moreBtnWrapper}>
-                <button onClick={() => navigate('/allthread')} className={styles.moreBtn}>
-                  🧵 전체 Thread 보기
-                </button>
-              </div>
-            )}
-          </section>
-        )}
-      </main>
+                  {t.title && (
+                    <h3 className={styles.threadTitle}>{t.title}</h3>
+                  )}
+                  <div className={styles.threadContent}>{t.content}</div>
 
-      {/* 이미지 클릭 시 모달 */}
-      {selectedImage && (
-        <ImageModal
-          src={selectedImage}
-          onClose={() => setSelectedImage(null)}
-          liked={likedImages[selectedImage] || false}
-          onLikeToggle={() => toggleLike(selectedImage)}
-        />
+                  <div className={styles.threadBadges}>
+                    {t.isAnon ? (
+                      <span
+                        className={`${styles.badge} ${styles.badgeAnon}`}
+                      >
+                        익명
+                      </span>
+                    ) : (
+                      <span className={styles.badge}>작성자</span>
+                    )}
+                  </div>
+
+                  <div className={styles.threadActions}>
+                    <button
+                      className={`${styles.actionBtn} ${liked[t.id] ? styles.liked : ''}`}
+                      onClick={() => toggleThreadLike(t.id)}
+                    >
+                      <img
+                        src={liked[t.id] ? 'reallove.svg' : 'love.svg'}
+                        alt="좋아요"
+                        width="16"
+                      />{' '}
+                      좋아요 {likes[t.id]}
+                    </button>
+                    <button className={styles.actionBtn}>
+                      <img
+                        src="comments.svg"
+                        alt="댓글"
+                        width="16"
+                      />{' '}
+                      댓글
+                    </button>
+                    <div className={styles.actionsSpacer} />
+                    <button className={styles.actionBtn}>↗ 공유</button>
+                  </div>
+                </article>
+              ))
+          )}
+          {threads.length > 0 && (
+            <div className={styles.moreBtnWrapper}>
+              <button
+                onClick={() => navigate('/allthread')}
+                className={styles.moreBtn}
+              >
+                🧵 전체 Thread 보기
+              </button>
+            </div>
+          )}
+        </section>
       )}
-    </div>
-  );
+    </main>
+
+    {/* 이미지 클릭 시 모달 */}
+    {selectedImage && (
+      <ImageModal
+        src={selectedImage}
+        onClose={() => setSelectedImage(null)}
+        liked={likedImages[selectedImage] || false}
+        onLikeToggle={() => toggleImageLike(selectedImage)}
+      />
+    )}
+  </div>
+);
 }

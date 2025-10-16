@@ -47,8 +47,10 @@ export default function Sidebar() {
           </Link>
         </li>
         <li>
-          <img src="thread.webp" alt="쓰레드" className={`${styles.icon} ${styles.mobileOnly}`} />
-          <span>쓰레드</span>
+          <Link to="/thread" className={styles.link}>
+            <img src="thread.webp" alt="쓰레드" className={`${styles.icon} ${styles.mobileOnly}`} />
+            <span>쓰레드</span>
+          </Link>
         </li>
         <li>
           <Link to="/mypage" className={styles.link}>

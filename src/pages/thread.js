@@ -1,97 +1,138 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import styles from '../styles/thread.module.css';
+import { useUserStore } from '../store/userStore'; // ✅ zustand에서 가져오기
+
+// 👇 MockAPI 엔드포인트 (리소스 이름이 post 라고 가정)
+const MOCK_API_URL = 'https://68ec478eeff9ad3b1401a745.mockapi.io/post';
+
+// 🧱 파일 상단 밖으로 빼기!
+function InputField({ id, label, value, onChange, placeholder, required }) {
+  return (
+    <div className={styles.formGroup}>
+      <label htmlFor={id}>{label}</label>
+      <input
+        id={id}
+        type="text"
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        required={required}
+        className={styles.input}
+      />
+    </div>
+  );
+}
+
 
 export default function CreatePost() {
-  const [title, setTitle] = useState('');
-  const [image, setImage] = useState(''); // 이미지 URL을 저장할 상태
-  const [content, setContent] = useState('');
-  const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
-  const navigate = useNavigate(); // 페이지 이동을 위한 hook
+  const [formData, setFormData] = useState({
+    title: '',
+    content: '',
+    isAnon: false,
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const MOCK_API_URL = 'https://68db332b23ebc87faa323c66.mockapi.io/Hanstagram'; //mockAPI 주소
+  // ✅ Zustand에서 현재 로그인한 사용자 이름 가져오기
+  const username = useUserStore((state) => state.name);
 
+  /** ✏️ 입력값 변경 핸들러 */
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
+  };
+
+  /** 🕹 익명 토글 핸들러 */
+  const handleAnonToggle = () => {
+    setFormData((prev) => ({ ...prev, isAnon: !prev.isAnon }));
+  };
+
+  /** 📨 axios로 게시물 등록 */
   const handleSubmit = async (e) => {
-    e.preventDefault(); // 폼 제출 시 페이지가 새로고침되는 것을 방지
-
-    if (isLoading) return; // 이미 제출 중이면 중복 실행 방지
+    e.preventDefault();
+    if (isLoading) return;
     setIsLoading(true);
 
-    // API로 보낼 새로운 게시물 데이터 객체
     const newPost = {
-      title,
-      image,
-      content,
-      createdAt: new Date().toISOString(), // 현재 시간을 ISO 형식으로 저장
-      likes: 0, // 새 게시물이므로 '좋아요'는 0으로 시작
-      isAnon: false //일단 익명 선택은 나중에 
+      title: formData.title,
+      content: formData.content,
+      isAnon: String(formData.isAnon), // ⚠ MockAPI 스키마에 따라 문자열로 전송
+      author: formData.isAnon ? '익명' : username,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      likes: 0,
     };
 
     try {
-      const response = await fetch(MOCK_API_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newPost),
-      });
-
-      if (!response.ok) {
-        throw new Error('데이터 전송에 실패했습니다.');
-      }
+      const res = await axios.post(MOCK_API_URL, newPost);
+      console.log('서버 응답:', res.data);
 
       alert('게시물이 성공적으로 등록되었습니다!');
-      navigate('/mypage'); // 성공 시 홈으로 이동
-      
+      navigate('/mypage');
     } catch (error) {
       console.error('게시물 등록 중 오류 발생:', error);
       alert('게시물 등록 중 오류가 발생했습니다.');
     } finally {
-      setIsLoading(false); // 로딩 상태 해제
+      setIsLoading(false);
     }
   };
 
+  /** 🧱 재사용 가능한 입력 필드 */
+  const InputField = ({ id, label, placeholder, required }) => (
+    <div className={styles.formGroup}>
+      <label htmlFor={id}>{label}</label>
+      <input
+        id={id}
+        type="text"
+        value={formData[id]}
+        onChange={handleChange}
+        placeholder={placeholder}
+        required={required}
+        className={styles.input}
+      />
+    </div>
+  );
+
   return (
     <div className={styles.container}>
-      <h1> Hastagram </h1>
-      <h2>새 게시물 만들기</h2>
+      <h1>Hanstagram</h1>
+      <h2>글 남기기</h2>
+
       <form onSubmit={handleSubmit} className={styles.form}>
-        <div className={styles.formGroup}>
-          <label htmlFor="title">제목</label>
-          <input
+            <InputField
             id="title"
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            label="제목"
+            value={formData.title}
+            onChange={handleChange}
             placeholder="제목을 입력하세요"
             required
-            className={styles.input}
-          />
-        </div>
-        <div className={styles.formGroup}>
-          <label htmlFor="image">이미지 URL</label>
-          <input
-            id="image"
-            type="url"
-            value={image}
-            onChange={(e) => setImage(e.target.value)}
-            placeholder="이미지 주소를 붙여넣으세요"
-            required
-            className={styles.input}
-          />
-        </div>
+            />
         <div className={styles.formGroup}>
           <label htmlFor="content">내용</label>
           <textarea
             id="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="캡션 추가..."
+            value={formData.content}
+            onChange={handleChange}
+            placeholder="내용을 입력하세요"
             required
             rows="10"
             className={styles.textarea}
           />
         </div>
+
+        <div className={styles.formGroup}>
+          <label>
+            <input
+              type="checkbox"
+              checked={formData.isAnon}
+              onChange={handleAnonToggle}
+            />
+            익명으로 게시하기
+          </label>
+        </div>
+
         <button type="submit" disabled={isLoading} className={styles.submitButton}>
           {isLoading ? '게시 중...' : '게시하기'}
         </button>

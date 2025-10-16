@@ -95,21 +95,20 @@ export default function HomePage() {
             <span className={styles.profileStat}>팔로워 0 </span>
             <span className={styles.profileStat}>팔로우 0 </span>
             <br />
-            <div>
-              <h3>오늘의 구절 📖</h3>
-              {verse && (
-                <>
-                  <p style={{ fontWeight: 'bold', marginBottom: '8px' }}>{verse.ref}</p>
-                  <iframe
-                    src={verse.url}
-                    width="600"
-                    height="100"
-                    style={{ border: 'none' }}
-                    title="성경 구절"
-                  ></iframe>
-                </>
-              )}
-            </div>
+              <div className={styles.verseSection}>
+                <h3>오늘의 구절 📖</h3>
+                {verse && (
+                  <>
+                    <p>{verse.ref}</p>
+                    <iframe
+                      src={verse.url}
+                      width="600"
+                      height="70"
+                      title="성경 구절"
+                    ></iframe>
+                  </>
+                )}
+              </div>
           </div>
         </section>
 
@@ -161,7 +160,7 @@ export default function HomePage() {
                 ))
               )}
             </div>
-            {posts.length > 6 && (
+            {posts.length > 0 && (
               <div className={styles.moreBtnWrapper}>
                 <button onClick={() => navigate('/allimage')} className={styles.moreBtn}>
                   📸 전체 사진 보기
@@ -221,7 +220,7 @@ export default function HomePage() {
                 );
               })
             )}
-            {threads.length > 6 && (
+            {threads.length > 0 && (
               <div className={styles.moreBtnWrapper}>
                 <button onClick={() => navigate('/allthread')} className={styles.moreBtn}>
                   🧵 전체 Thread 보기

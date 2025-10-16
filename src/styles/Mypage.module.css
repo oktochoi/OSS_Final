@@ -1,25 +1,33 @@
+/* ✅ 페이지 전체를 블랙으로 덮기 */
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: black;  /* 전체 배경 블랙 */
+  color: white;
+  min-height: 100vh;        /* 최소 화면 높이 채우기 */
+}
+
 .pageWrapper {
-    display: flex;
-    width: 100vw;     
-    height: 100vh;   
-    background-color: black; 
-    padding-bottom: 450px;
-  }
-  
-  .main {
-    margin-left: 250px;
-    padding: 40px;
-    color: white;
-    flex: 1;
-    background-color: black;
-  }
-  
-  .profileSection {
-    display: flex;
-    align-items: flex-start; /* ✅ 이미지와 텍스트 상단 정렬 */
-    gap: 32px;
-    margin-bottom: 100px;
-  }
+  display: flex;
+  width: 100vw;
+  min-height: 100vh;        /* 고정 height 대신 최소 높이 */
+  background-color: black;
+}
+
+.main {
+  margin-left: 250px;
+  padding: 40px;
+  flex: 1;
+  background-color: black;  /* 불필요해질 수도 있지만 안전하게 유지 */
+  color: white;
+}
+
+.profileSection {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+  margin-bottom: 100px;
+}
 
   .profileInfo h2 {
     font-family: Inter;
@@ -188,29 +196,28 @@
   }
 
 /* ===============================
-   📌 기본 Thread 스타일 (데스크톱)
+   📌 Instagram Thread 스타일 (데스크톱)
 ================================ */
 .threadSection {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  max-width: 750px;
+  gap: 12px;
+  max-width: 600px;
   margin: 20px auto;
-  padding: 0 16px;
+  padding: 0 12px;
 }
 
 .threadCard {
   background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  padding: 16px 18px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border: 1px solid #dbdbdb;                /* 인스타 감성 얇은 테두리 */
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: none;                        /* 그림자 제거 (Flat 디자인) */
+  transition: background 0.15s ease;
 }
 
 .threadCard:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+  background: #fafafa;                     /* 호버 시 살짝 밝아지는 효과 */
 }
 
 /* 헤더 */
@@ -218,7 +225,7 @@
   display: grid;
   grid-template-columns: 40px 1fr auto;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   margin-bottom: 8px;
 }
 
@@ -226,11 +233,12 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #93c5fd, #2563eb);
+  background: #f0f0f0;                     /* Flat avatar 배경 */
   display: grid;
   place-items: center;
-  color: white;
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 14px;
+  color: #262626;
 }
 
 .threadMeta {
@@ -239,86 +247,88 @@
 }
 
 .threadAuthor {
-  font-weight: 700;
+  font-weight: 600;
+  font-size: 14px;
+  color: #262626;
 }
 
 .threadTime {
   font-size: 12px;
-  color: #6b7280;
+  color: #8e8e8e;
 }
 
 .threadMoreBtn {
   border: none;
   background: transparent;
   font-size: 20px;
-  color: #6b7280;
+  color: #8e8e8e;
   cursor: pointer;
 }
 
 /* 제목 & 내용 */
 .threadTitle {
-  font-size: 18px;
-  font-weight: 800;
-  margin: 4px 0 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #262626;
+  margin: 6px 0 6px;
 }
 
 .threadContent {
   font-size: 14px;
-  line-height: 1.6;
-  color: #1f2937;
+  line-height: 1.5;
+  color: #262626;
   white-space: pre-wrap;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 /* 뱃지 */
 .threadBadges {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .badge {
-  font-size: 12px;
-  padding: 4px 8px;
+  font-size: 11.5px;
+  padding: 3px 8px;
   border-radius: 999px;
-  background: #eff6ff;
-  color: #2563eb;
-  border: 1px solid rgba(37, 99, 235, 0.25);
+  background: #f0f0f0;
+  color: #262626;
+  border: none;
 }
 
 .badgeAnon {
   background: #fef2f2;
   color: #ef4444;
-  border-color: rgba(239, 68, 68, 0.25);
 }
 
 /* 액션 */
 .threadActions {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding-top: 10px;
-  border-top: 1px dashed #e5e7eb;
-  margin-top: 8px;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px solid #efefef;
+  margin-top: 6px;
 }
 
 .actionBtn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
+  gap: 4px;
+  padding: 6px 10px;
   font-size: 13px;
-  border-radius: 12px;
+  border-radius: 8px;
   background: transparent;
-  border: 1px solid #e5e7eb;
+  border: none;
+  color: #8e8e8e;
   cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  transition: color 0.15s ease;
 }
 
 .actionBtn:hover {
-  background: #eff6ff;
-  border-color: #2563eb;
+  color: #262626;
 }
 
 .actionsSpacer {
@@ -329,37 +339,32 @@
   text-align: center;
   color: #9ca3af;
   margin-top: 24px;
+  font-size: 13px;
 }
 
 /* ===============================
    📱 반응형 (모바일 & 태블릿)
 ================================ */
 
-/* 태블릿 사이즈 이하 */
 @media (max-width: 768px) {
   .threadSection {
     max-width: 100%;
-    padding: 0 12px;
-    gap: 12px;
-  }
-
-  .threadCard {
-    padding: 14px 16px;
+    padding: 0 10px;
+    gap: 10px;
   }
 
   .threadHeader {
     grid-template-columns: 36px 1fr auto;
-    gap: 10px;
   }
 
   .threadAvatar {
     width: 36px;
     height: 36px;
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .threadTitle {
-    font-size: 16px;
+    font-size: 14px;
   }
 
   .threadContent {
@@ -368,11 +373,9 @@
 
   .actionBtn {
     font-size: 12px;
-    padding: 5px 10px;
   }
 }
 
-/* 모바일 사이즈 이하 */
 @media (max-width: 480px) {
   .threadSection {
     padding: 0 8px;
@@ -380,27 +383,26 @@
 
   .threadCard {
     padding: 12px 14px;
-    border-radius: 12px;
+    border-radius: 10px;
   }
 
   .threadHeader {
     grid-template-columns: 32px 1fr auto;
-    gap: 8px;
   }
 
   .threadAvatar {
     width: 32px;
     height: 32px;
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .threadTitle {
-    font-size: 15px;
+    font-size: 13.5px;
   }
 
   .threadContent {
     font-size: 12.5px;
-    line-height: 1.5;
+    line-height: 1.45;
   }
 
   .badge {
@@ -408,13 +410,114 @@
     padding: 3px 6px;
   }
 
-  .actionBtn {
-    padding: 4px 8px;
-    font-size: 11.5px;
-    gap: 4px;
-  }
-
   .threadMoreBtn {
     font-size: 18px;
   }
+}
+
+.viewButtons {
+  display: flex;
+  justify-content: center;        /* 기본: 가운데 정렬 */
+  align-items: center;
+  gap: 10px;
+  margin-top: 15px;
+  width: 100%;
+}
+
+.viewButtons button {
+  background-color: #fff;
+  color: #000;
+  border: 1px solid #dbdbdb;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  margin-bottom: 30px;
+}
+
+.viewButtons button:hover {
+  background-color: #f5f5f5;
+}
+
+.activeBtn {
+  background-color: #000;
+  color: #fff;
+  border: 1px solid #000;
+}
+
+/* 📱 반응형: 화면이 좁아지면 왼쪽 정렬로 변경 */
+@media (max-width: 600px) {
+  .viewButtons {
+    justify-content: flex-start;   /* 왼쪽 정렬로 전환 */
+    padding-left: 10px;            /* 좌측에 여백 살짝 */
+  }
+}
+
+.moreBtnWrapper {
+  display: flex;
+  justify-content: center;   /* 수평 가운데 정렬 */
+  margin-top: 20px;          /* 그리드와 간격 */
+}
+
+/* 인스타 느낌으로 미니멀한 버튼 */
+.moreBtn {
+  background: transparent;
+  border: none;
+  color: #8e8e8e;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 10px 16px;
+  transition: color 0.2s ease;
+}
+
+.moreBtn:hover {
+  color: #ffffff;
+}
+
+.moreBtn:active {
+  opacity: 0.7;
+}
+
+/* 모바일 대응 */
+@media (max-width: 480px) {
+  .moreBtn {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+}
+
+/* 📖 오늘의 구절 영역 */
+.verseSection {
+  background-color: #f7f2e6;   /* 양피지 느낌 */
+  color: #3b2f2f;              /* 잉크 갈색 */
+  border: 1px solid #d9c9aa;
+  border-radius: 10px;
+  padding: 10px 14px;
+  max-width: 640px;
+  margin: 30px auto 0; 
+    text-align: center;
+  box-shadow: 0 2px 8px rgba(43, 33, 24, 0.08);
+}
+
+.verseSection h3 {
+  font-family: 'Georgia', serif;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  color: #6f4518;             /* 제목 강조 갈색 */
+}
+
+.verseSection p {
+  font-family: 'Georgia', serif;
+  font-weight: 600;
+  color: #3b2f2f;
+}
+
+.verseSection iframe {
+  border: none;
+  background-color: transparent;
+  margin-top: 8px;
 }

@@ -97,18 +97,29 @@ export default function CreatePost() {
 
   return (
     <div className={styles.container}>
-      <h1>Hanstagram</h1>
+      <h1>ℌ𝔞𝔫𝔰𝔱𝔞𝔯𝔤𝔯𝔞𝔪</h1>
       <h2>글 남기기</h2>
 
       <form onSubmit={handleSubmit} className={styles.form}>
-            <InputField
+          <label htmlFor="title" style={{ color:'black', display: 'block', fontWeight: 'bold', margin:0, padding:0}}>
+            제목
+          </label>  
+          <input
             id="title"
-            label="제목"
+            name="title"
+            type="text"
             value={formData.title}
             onChange={handleChange}
             placeholder="제목을 입력하세요"
             required
-            />
+            style={{
+              width: '100%',
+              padding: '10px',
+              border: '1px solid #ccc',
+              borderRadius: '6px',
+              fontSize: '14px'
+            }}
+          />
         <div className={styles.formGroup}>
           <label htmlFor="content">내용</label>
           <textarea

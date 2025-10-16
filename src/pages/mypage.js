@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import ImageModal from '../components/ImageModal';
 import styles from '../styles/Mypage.module.css';
@@ -24,7 +25,6 @@ export default function HomePage() {
   const { name, profileImage } = useUserStore();
   const [selectedImage, setSelectedImage] = useState(null);
   const [likedImages, setLikedImages] = useState({});
-  const [verse, setVerse] = useState(null);
 
   const [viewMode, setViewMode] = useState('post'); // post or thread
   const [posts, setPosts] = useState([]);
@@ -77,6 +77,7 @@ export default function HomePage() {
   const recentPosts = posts.slice(-6).reverse();
   const recentThreads = threads.slice(-6).reverse();
 
+
   return (
     <div className={styles.pageWrapper}>
       <Sidebar />
@@ -93,8 +94,7 @@ export default function HomePage() {
             </h2>
             <span className={styles.profileStat}>게시물 {posts.length}</span>
             <span className={styles.profileStat}>팔로워 0 </span>
-            <span className={styles.profileStat}>팔로우 0 </span>
-            <br />
+            <span className={styles.profileStat}>팔로우 0 </span><br />
             <div>
               <h3>오늘의 구절 📖</h3>
               {verse && (
@@ -166,6 +166,19 @@ export default function HomePage() {
                 <button onClick={() => navigate('/allimage')} className={styles.moreBtn}>
                   📸 전체 사진 보기
                 </button>
+        <section className={styles.gridSection}>
+          <div className={styles.grid}>
+            {['/11.jpg', '/22.jpg', '/33.jpg', '4.jpg', '5.jpg', '6.jpg'].map((src, idx) => (
+              <div key={idx} className={styles.post} onClick={() => setSelectedImage(src)}>
+                <img src={src} alt={`게시물 ${idx + 1}`} />
+                <div className={styles.overlay}>
+                  <span className={styles.lc}>
+                    <img src={likedImages[src] ? 'reallove.svg' : 'love.svg'} alt="좋아요" /> 좋아요
+                  </span>
+                  <span className={styles.lc}>
+                    <img src="comments.svg" alt="댓글" /> 댓글
+                  </span>
+                </div>
               </div>
             )}
           </section>

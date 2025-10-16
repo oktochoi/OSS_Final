@@ -4,7 +4,6 @@ import RegisterPage from './pages/registerpage'
 import MyPage from './pages/mypage2'
 import InfoEditPage from './pages/info';  
 import CreatePost from './pages/thread';
-import CreatePost from './lib/create'
 import EditPost from './lib/edit';
 
 export default function App() {

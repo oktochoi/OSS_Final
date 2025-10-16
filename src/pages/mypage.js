@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import ImageModal from '../components/ImageModal';
 import styles from '../styles/Mypage.module.css';
@@ -27,9 +26,14 @@ export default function HomePage() {
   const [likedImages, setLikedImages] = useState({});
 
   const [viewMode, setViewMode] = useState('post'); // post or thread
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState([]); //게시물 목록 전체를 저장 
   const [threads, setThreads] = useState([]);
   const navigate = useNavigate();
+  const [verse, setVerse] = useState(null);
+
+  const [isLoading, setIsLoading] = useState(true); // 로딩 상태
+  const [selectedPostId, setSelectedPostId] = useState(null); // 선택된 게시물의 ID를 저장 (for ImageModal)
+  const [likedPosts, setLikedPosts] = useState({});
 
 
   const [likes, setLikes] = useState(
@@ -89,6 +93,13 @@ export default function HomePage() {
       console.error('게시물 불러오기 오류:', err);
     }
   };
+
+  // 게시물 삭제 
+  const removePostFromState = (deletedPostId) => {
+    setPosts(currentPosts => currentPosts.filter(post => post.id !== deletedPostId));
+    setSelectedPostId(null); 
+  };
+
 
   // 🧵 Thread GET
   const fetchThreads = async () => {
@@ -202,45 +213,37 @@ const handleDeleteThread = async (id) => {
         </div>
 
         {/* 📸 최근 6개 게시물 */}
-{viewMode === 'post' && (
-  <section className={styles.gridSection}>
-    <div className={styles.grid}>
-      {recentPosts.length === 0 ? (
-        <p>게시물이 없습니다.</p>
-      ) : (
-        recentPosts.map((post) => (
-          <div
-            key={post.id}
-            className={styles.post}
-            onClick={() => setSelectedImage(post.image)}
-          >
-            <img src={post.image} alt={post.title} />
-            <div className={styles.overlay}>
-              <span className={styles.lc}>
-                <img
-                  src={likedImages[post.image] ? 'reallove.svg' : 'love.svg'}
-                  alt="좋아요"
-                />{' '}
-                {post.likes}
-              </span>
-              <span className={styles.lc}>
-                <img src="comments.svg" alt="댓글" /> 댓글
-              </span>
-            </div>
-          </div>
-        ))
-      )}
-    </div>
-
-    {posts.length > 0 && (
-      <div className={styles.moreBtnWrapper}>
-        <button onClick={() => navigate('/allimage')} className={styles.moreBtn}>
-          📸 전체 사진 보기
-        </button>
-      </div>
-    )}
-  </section>
-)}
+        {viewMode === 'post' && (
+                  <section className={styles.gridSection}>
+                    <div className={styles.grid}>
+                      {posts.length === 0 ? (
+                        <p>게시물이 없습니다.</p>
+                      ) : (
+                        posts.map((post) => (
+                          <div 
+                            key={post.id} 
+                            className={styles.post} 
+                            onClick={() => setSelectedPostId(post.id)} // Use setSelectedPostId for ImageModal
+                          >
+                            <img src={post.image} alt={post.title} />
+                            <div className={styles.overlay}>
+                              <span className={styles.lc}>
+                                <img 
+                                  src={likedPosts[post.id] ? 'reallove.svg' : 'love.svg'} 
+                                  alt="좋아요" 
+                                />{' '}
+                                좋아요
+                              </span>
+                              <span className={styles.lc}>
+                                <img src="comments.svg" alt="댓글" /> 댓글
+                              </span>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </section>
+                )}
 
 
         {/* 🧵 최근 6개 Thread */}
@@ -363,12 +366,11 @@ const handleDeleteThread = async (id) => {
     </main>
 
     {/* 이미지 클릭 시 모달 */}
-    {selectedImage && (
+    {selectedPostId && ( // selectedPostId가 있을 때만 모달을 띄웁니다.
       <ImageModal
-        src={selectedImage}
-        onClose={() => setSelectedImage(null)}
-        liked={likedImages[selectedImage] || false}
-        onLikeToggle={() => toggleImageLike(selectedImage)}
+        postId={selectedPostId} // post ID를 prop으로 전달
+        onClose={() => setSelectedPostId(null)} 
+        onDeleteSuccess={removePostFromState} 
       />
     )}
   </div>

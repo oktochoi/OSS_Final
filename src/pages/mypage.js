@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import ImageModal from '../components/ImageModal';
 import styles from '../styles/Mypage.module.css';
@@ -24,7 +25,6 @@ export default function HomePage() {
   const { name, profileImage } = useUserStore();
   const [selectedImage, setSelectedImage] = useState(null);
   const [likedImages, setLikedImages] = useState({});
-  const [verse, setVerse] = useState(null);
 
   const [viewMode, setViewMode] = useState('post'); // post or thread
   const [posts, setPosts] = useState([]);
@@ -147,6 +147,7 @@ const handleDeleteThread = async (id) => {
   const recentPosts = posts.slice(-6).reverse();
   const recentThreads = threads.slice(-6).reverse();
 
+
   return (
     <div className={styles.pageWrapper}>
       <Sidebar />
@@ -201,44 +202,46 @@ const handleDeleteThread = async (id) => {
         </div>
 
         {/* 📸 최근 6개 게시물 */}
-        {viewMode === 'post' && (
-          <section className={styles.gridSection}>
-            <div className={styles.grid}>
-              {recentPosts.length === 0 ? (
-                <p>게시물이 없습니다.</p>
-              ) : (
-                recentPosts.map((post) => (
-                  <div
-                    key={post.id}
-                    className={styles.post}
-                    onClick={() => setSelectedImage(post.image)}
-                  >
-                    <img src={post.image} alt={post.title} />
-                    <div className={styles.overlay}>
-                      <span className={styles.lc}>
-                        <img
-                          src={likedImages[post.image] ? 'reallove.svg' : 'love.svg'}
-                          alt="좋아요"
-                        />{' '}
-                        {post.likes}
-                      </span>
-                      <span className={styles.lc}>
-                        <img src="comments.svg" alt="댓글" /> 댓글
-                      </span>
-                    </div>
-                  </div>
-                ))
-              )}
+{viewMode === 'post' && (
+  <section className={styles.gridSection}>
+    <div className={styles.grid}>
+      {recentPosts.length === 0 ? (
+        <p>게시물이 없습니다.</p>
+      ) : (
+        recentPosts.map((post) => (
+          <div
+            key={post.id}
+            className={styles.post}
+            onClick={() => setSelectedImage(post.image)}
+          >
+            <img src={post.image} alt={post.title} />
+            <div className={styles.overlay}>
+              <span className={styles.lc}>
+                <img
+                  src={likedImages[post.image] ? 'reallove.svg' : 'love.svg'}
+                  alt="좋아요"
+                />{' '}
+                {post.likes}
+              </span>
+              <span className={styles.lc}>
+                <img src="comments.svg" alt="댓글" /> 댓글
+              </span>
             </div>
-            {posts.length > 0 && (
-              <div className={styles.moreBtnWrapper}>
-                <button onClick={() => navigate('/allimage')} className={styles.moreBtn}>
-                  📸 전체 사진 보기
-                </button>
-              </div>
-            )}
-          </section>
-        )}
+          </div>
+        ))
+      )}
+    </div>
+
+    {posts.length > 0 && (
+      <div className={styles.moreBtnWrapper}>
+        <button onClick={() => navigate('/allimage')} className={styles.moreBtn}>
+          📸 전체 사진 보기
+        </button>
+      </div>
+    )}
+  </section>
+)}
+
 
         {/* 🧵 최근 6개 Thread */}
    {viewMode === 'thread' && (

@@ -213,17 +213,6 @@ export default function HomePage() {
         ))
       )}
     </div>
-
-    {posts.length > 0 && (
-      <div className={styles.moreBtnWrapper}>
-        <button
-          onClick={() => navigate('/allimage')}
-          className={styles.moreBtn}
-        >
-          📸 전체 사진 보기
-        </button>
-      </div>
-    )}
   </section>
 )}
 

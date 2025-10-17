@@ -4,27 +4,8 @@ import axios from 'axios';
 import styles from '../styles/thread.module.css';
 import { useUserStore } from '../store/userStore'; // ✅ zustand에서 가져오기
 
-// 👇 MockAPI 엔드포인트 (리소스 이름이 post 라고 가정)
+// 👇 MockAPI 엔드포인트
 const MOCK_API_URL = 'https://68ec478eeff9ad3b1401a745.mockapi.io/post';
-
-// 🧱 파일 상단 밖으로 빼기!
-function InputField({ id, label, value, onChange, placeholder, required }) {
-  return (
-    <div className={styles.formGroup}>
-      <label htmlFor={id}>{label}</label>
-      <input
-        id={id}
-        type="text"
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        required={required}
-        className={styles.input}
-      />
-    </div>
-  );
-}
-
 
 export default function CreatePost() {
   const [formData, setFormData] = useState({
@@ -35,7 +16,7 @@ export default function CreatePost() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  // ✅ Zustand에서 현재 로그인한 사용자 이름 가져오기
+  // ✅ Zustand에서 로그인한 사용자 이름 가져오기
   const username = useUserStore((state) => state.name);
 
   /** ✏️ 입력값 변경 핸들러 */
@@ -58,8 +39,8 @@ export default function CreatePost() {
     const newPost = {
       title: formData.title,
       content: formData.content,
-      isAnon: String(formData.isAnon), // ⚠ MockAPI 스키마에 따라 문자열로 전송
-      author: formData.isAnon ? '익명' : username,
+      isAnon: String(formData.isAnon), // ⚠ MockAPI 문자열로 전송
+      author: formData.isAnon ? '익명' : username || '작성자없음',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       likes: 0,
@@ -68,32 +49,15 @@ export default function CreatePost() {
     try {
       const res = await axios.post(MOCK_API_URL, newPost);
       console.log('서버 응답:', res.data);
-
-      alert('게시물이 성공적으로 등록되었습니다!');
+      alert('✅ 게시물이 성공적으로 등록되었습니다!');
       navigate('/mypage');
     } catch (error) {
-      console.error('게시물 등록 중 오류 발생:', error);
-      alert('게시물 등록 중 오류가 발생했습니다.');
+      console.error('게시물 등록 중 오류:', error);
+      alert('⚠ 게시물 등록 중 오류가 발생했습니다.');
     } finally {
       setIsLoading(false);
     }
   };
-
-  /** 🧱 재사용 가능한 입력 필드 */
-  const InputField = ({ id, label, placeholder, required }) => (
-    <div className={styles.formGroup}>
-      <label htmlFor={id}>{label}</label>
-      <input
-        id={id}
-        type="text"
-        value={formData[id]}
-        onChange={handleChange}
-        placeholder={placeholder}
-        required={required}
-        className={styles.input}
-      />
-    </div>
-  );
 
   return (
     <div className={styles.container}>
@@ -101,14 +65,21 @@ export default function CreatePost() {
       <h2>글 남기기</h2>
 
       <form onSubmit={handleSubmit} className={styles.form}>
-            <InputField
+        {/* 제목 입력 */}
+        <div className={styles.formGroup}>
+          <label htmlFor="title">제목</label>
+          <input
             id="title"
-            label="제목"
+            type="text"
             value={formData.title}
             onChange={handleChange}
             placeholder="제목을 입력하세요"
             required
-            />
+            className={styles.input}
+          />
+        </div>
+
+        {/* 내용 입력 */}
         <div className={styles.formGroup}>
           <label htmlFor="content">내용</label>
           <textarea
@@ -122,6 +93,7 @@ export default function CreatePost() {
           />
         </div>
 
+        {/* 익명 옵션 */}
         <div className={styles.formGroup}>
           <label>
             <input

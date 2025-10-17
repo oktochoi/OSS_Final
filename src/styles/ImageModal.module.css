@@ -1,18 +1,20 @@
 .overlay {
   position: fixed; 
-  left: 20%;
-  top: 59px;
-  width: 80vw;     
-  height: 60vh;    
-  background-color: transparent; 
+  top: 0;
+  left: 0;
+  width: 100vw;     
+  height: 100vh;    
+  background-color: rgba(0, 0, 0, 0.65); 
   display: flex;
+  justify-content: center; 
+  align-items: center;     
   z-index: 1000;
 }
 
 .modal {
   display: flex;
-  width: 708px;
-  height: 550px;
+  width: 950px;
+  height: 800px;
   background-color: #000;
   overflow: hidden;
 }
@@ -25,8 +27,8 @@
 
 .imageSection img {
   width: 100%;
-  height: 729px;
-  object-fit: cover;
+  height: 100%;
+  object-fit: contain;
 }
 
 .commentSection {
@@ -93,6 +95,7 @@
   border-top: 1px solid #222;
   padding-top: 12px;
   padding-bottom: 12px;
+  margin-top: auto; 
 }
 
 .commentbar {
@@ -131,4 +134,25 @@
   font-weight: 700;
   border: none;
   cursor: pointer;
+}
+
+.status {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  color: white;
+  font-size: 1.5rem;
+}
+
+.postContent {
+  padding: 16px;
+  border-bottom: 1px solid #faf8f8;
+}
+
+.postContent p {
+  margin: 0;
+  font-size: 14px;
+  color: #a9a7a7;
 }

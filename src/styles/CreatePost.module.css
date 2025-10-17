@@ -39,6 +39,20 @@
   color: #333;
 }
 
+.checkbox {
+  width: 18px;
+  height: 18px;
+  margin: 0; /* 기본 마진 제거 */
+  order: 1; /* 체크박스가 레이블 앞에 오도록 순서 지정 */
+  cursor: pointer;
+}
+
+.checkbox:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #0095f6;
+  border-radius: 2px;
+}
+
 .input,
 .textarea {
   padding: 12px;

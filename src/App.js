@@ -6,6 +6,7 @@ import InfoEditPage from './pages/info';
 import CreatePost from './pages/thread';
 import CreatePost1 from './lib/create'
 import EditPost from './lib/edit';
+import AllThread from './pages/allthread';
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
       <Route path="/thread" element={<CreatePost />} />
       <Route path="/create" element={ <CreatePost1 /> } /> 
       <Route path="/edit/:postId" element={<EditPost />} />
+      <Route path="/allthread" element={<AllThread />} />
     </Routes>
   )
 }

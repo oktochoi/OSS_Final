@@ -1,7 +1,10 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styles from '../styles/Sidebar.module.css';
 
 export default function Sidebar() {
+  const [showTextarea, setShowTextarea] = useState(false);
+
   return (
     <aside className={styles.sidebar}>
       <img
@@ -21,8 +24,21 @@ export default function Sidebar() {
           <span>홈</span>
         </li>
         <li>
-          <img src="search.png" alt="검색" className={`${styles.icon} ${styles.mobileOnly}`} />
-          <span>검색</span>
+          <img 
+            src="search.png" 
+            alt="검색" 
+            className={`${styles.icon} ${styles.mobileOnly}`} 
+            onClick={() => setShowTextarea(!showTextarea)} 
+          />
+          {showTextarea ? (
+            <textarea
+              className={styles.searchTextarea}
+              placeholder="검색"
+              rows="1"
+            />
+          ) : (
+            <span>검색</span>
+          )}
         </li>
         <li>
           <img

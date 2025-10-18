@@ -7,6 +7,8 @@ export default function CreatePost1() {
   const [image, setImage] = useState(null); // 실제 File 객체
   const [preview, setPreview] = useState(null); // 미리보기 URL
   const [content, setContent] = useState('');
+  const [isAnon, setIsAnon] = useState(false); // ✅ 익명 여부
+  const [likes, setLikes] = useState(0); // ✅ 좋아요 수 직접 입력 가능
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -29,8 +31,7 @@ export default function CreatePost1() {
     setIsLoading(true);
 
     try {
-      // 💡 MockAPI는 실제 파일 업로드를 지원하지 않으므로, 
-      // File 객체를 미리보기용 URL로 변환해 저장
+      // MockAPI는 파일 업로드를 지원하지 않으므로 URL만 전송
       const imageUrl = preview || '';
 
       const newPost = {
@@ -38,8 +39,8 @@ export default function CreatePost1() {
         image: imageUrl,
         content,
         createdAt: new Date().toISOString(),
-        likes: 0,
-        isAnon: false,
+        likes: Number(likes) || 0, // ✅ 직접 입력한 좋아요 수
+        isAnon: String(isAnon), // ✅ true/false → 문자열로
       };
 
       const response = await fetch(MOCK_API_URL, {
@@ -116,6 +117,32 @@ export default function CreatePost1() {
           />
         </div>
 
+        {/* ✅ 익명 여부 */}
+        <div className={styles.formGroupCheckbox}>
+          <label >
+              익명으로 게시하기
+            <input
+              type="checkbox"
+              checked={isAnon}
+              onChange={() => setIsAnon(!isAnon)}
+            />
+          </label>
+        </div>
+
+        {/* ✅ 좋아요 초기값 입력 */}
+        <div className={styles.formGroup}>
+          <label htmlFor="likes">좋아요 수 (초기값)</label>
+          <input
+            id="likes"
+            type="number"
+            min="0"
+            value={likes}
+            onChange={(e) => setLikes(e.target.value)}
+            className={styles.input}
+          />
+        </div>
+
+        {/* 게시 버튼 */}
         <button
           type="submit"
           disabled={isLoading}

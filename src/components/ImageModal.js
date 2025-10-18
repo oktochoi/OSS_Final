@@ -36,16 +36,17 @@ export default function ImageModal({ post, onClose, liked, onLikeToggle }) {
     try {
       await fetch(`${MOCK_API_URL}/${post.id}`, { method: 'DELETE' });
       alert('🗑 게시물이 삭제되었습니다.');
-      onClose();
+      onClose(); // 모달 닫기
     } catch (err) {
       console.error('삭제 오류:', err);
       alert('⚠ 게시물 삭제 중 오류가 발생했습니다.');
     }
   };
 
+
   // ✅ 수정 페이지 이동
   const handleEdit = () => {
-    navigate(`/edit?id=${post.id}`);
+    navigate(`/edit/${post.id}`);
   };
 
   if (!post) return null;

@@ -6,6 +6,7 @@ export default function EditPost() {
   const [title, setTitle] = useState('');
   const [image, setImage] = useState('');
   const [content, setContent] = useState('');
+  const [isAnon, setAnon] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   
   const { postId } = useParams(); // URL에서 postId 파라미터 가져오기
@@ -25,6 +26,7 @@ export default function EditPost() {
         setTitle(data.title);
         setImage(data.image);
         setContent(data.content);
+        setAnon(data.isAnon);
       } catch (error) {
         console.error(error);
         alert(error.message);
@@ -40,7 +42,7 @@ export default function EditPost() {
     e.preventDefault();
     setIsLoading(true);
 
-    const updatedPost = { title, image, content };
+    const updatedPost = { title, image, content, isAnon};
 
     try {
       const response = await fetch(MOCK_API_URL, {
@@ -94,6 +96,16 @@ export default function EditPost() {
             id="content" value={content}
             onChange={(e) => setContent(e.target.value)} required rows="10"
             className={styles.textarea}
+          />
+        </div>
+        <div className={styles.formGroup}>
+          <label htmlFor="content">익명표시</label>
+          <input 
+            type = "checkbox"
+            id="isAnon"
+            checked={isAnon}
+            onChange={(e) => setAnon(e.target.checked)}
+            className={styles.checkbox}
           />
         </div>
         <button type="submit" disabled={isLoading} className={styles.submitButton}>

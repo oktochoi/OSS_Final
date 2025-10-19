@@ -1,9 +1,20 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styles from '../styles/Sidebar.module.css';
 
 export default function Sidebar() {
   const [showTextarea, setShowTextarea] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
+
+  const handleSearch = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey && searchTerm.trim() !== '') {
+      e.preventDefault(); 
+      navigate(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
+      setSearchTerm('');
+      setShowTextarea(false);
+    }
+  };
 
   return (
     <aside className={styles.sidebar}>
@@ -26,6 +37,9 @@ export default function Sidebar() {
               className={styles.searchTextarea}
               placeholder="검색"
               rows="1"
+              value={searchTerm} 
+              onChange={(e) => setSearchTerm(e.target.value)} 
+              onKeyDown={handleSearch} 
             />
           ) : (
             <span>검색</span>

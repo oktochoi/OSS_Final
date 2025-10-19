@@ -112,7 +112,7 @@ export default function ImageModal({ postId, onClose, onDeleteSuccess }) {
               alt="유저" 
             />
             <span>{post.isAnon ? '익명' : (post.author || '작성자')}</span>
-            <img src="/other.svg" className={styles.other} alt="옵션" onClick={() => setShowDropdown(!showDropdown)} />
+            <img src="/Other.svg" className={styles.other} alt="옵션" onClick={() => setShowDropdown(!showDropdown)} />
             {showDropdown && (
               <div className={styles.dropdown}>
                 <button onClick={handleEdit}>Edit</button>

@@ -7,16 +7,7 @@ export default function Sidebar() {
 
   return (
     <aside className={styles.sidebar}>
-      <img
-        src="logo.png"
-        alt="인스타그램 로고"
-        className={`${styles.logo} ${styles.desktopOnly}`}
-      />
-      <img
-        src="instalogo.png"
-        alt="인스타그램 아이콘"
-        className={`${styles.logo} ${styles.tabletOnly}`}
-      />
+      <h1 className={`${styles.log1} ${styles.desktopOnly}`}>ℌ𝔞𝔫𝔰𝔱𝔞𝔯𝔤𝔯𝔞𝔪</h1>
 
       <ul className={styles.menu}>
         <li>
@@ -53,7 +44,7 @@ export default function Sidebar() {
           <span>메시지</span>
         </li>
         <li>
-          <img src="yes.png" alt="알림" className={`${styles.icon} ${styles.mobileOnly}`} />
+          <img src="Yes.png" alt="알림" className={`${styles.icon} ${styles.mobileOnly}`} />
           <span>알림</span>
         </li>
         <li className={styles.nomobileOnly}>

@@ -18,7 +18,7 @@ export default function RegisterPage() {
     <div className={styles.background}>
       <div className={styles.container}>
         <div className={styles.card}>
-          <img src="logo.png" className={styles.logo} alt="instagram logo" />
+          <h1 className={styles.logo}>ℍ𝕒𝕟𝕤𝕥𝕒𝕣𝕘𝕣𝕒𝕞</h1>
           <p className={styles.subtitle}>
             친구들의 사진과 동영상을 보려면 가입하세요.
           </p>

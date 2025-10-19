@@ -44,6 +44,7 @@
   display: flex;
   align-items: center;
   margin-bottom: 1rem;
+  position: relative; 
 }
 
 .userInfo span {
@@ -55,6 +56,7 @@
   margin-left: auto;
   width: 22px;
   height: 22px;
+  cursor: pointer; 
 }
 
 .comments {
@@ -148,11 +150,43 @@
 
 .postContent {
   padding: 16px;
-  border-bottom: 1px solid #efefef;
+  border-bottom: 1px solid #faf8f8;
 }
 
 .postContent p {
   margin: 0;
   font-size: 14px;
-  color: #262626;
+  color: #a9a7a7;
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%; 
+  right: 0; 
+  z-index: 1001; 
+  
+  background-color: #262626; 
+  border: 1px solid #363636;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  padding: 4px 0;
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  margin-top: 5px; 
+}
+
+.dropdown button {
+  background: none; 
+  border: none; 
+  color: white; 
+  text-align: center;
+  padding: 8px 15px;
+  cursor: pointer;
+  font-size: 14px;
+  width: 100%; 
+}
+
+.dropdown button:hover {
+  background-color: #3e3e3e; 
 }

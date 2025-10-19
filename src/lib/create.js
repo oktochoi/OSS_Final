@@ -6,6 +6,7 @@ export default function CreatePost() {
   const [title, setTitle] = useState('');
   const [image, setImage] = useState(''); // 이미지 URL을 저장할 상태
   const [content, setContent] = useState('');
+  const [isAnon, setAnon] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
   const navigate = useNavigate(); // 페이지 이동을 위한 hook
 
@@ -24,7 +25,7 @@ export default function CreatePost() {
       content,
       createdAt: new Date().toISOString(), // 현재 시간을 ISO 형식으로 저장
       likes: 0, // 새 게시물이므로 '좋아요'는 0으로 시작
-      isAnon: false //일단 익명 선택은 나중에 
+      isAnon: isAnon
     };
 
     try {
@@ -90,6 +91,16 @@ export default function CreatePost() {
             required
             rows="10"
             className={styles.textarea}
+          />
+        </div>
+        <div className={styles.formGroup}>
+          <label htmlFor="content">익명표시</label>
+          <input 
+            type = "checkbox"
+            id="isAnon"
+            checked={isAnon}
+            onChange={(e) => setAnon(e.target.checked)}
+            className={styles.checkbox}
           />
         </div>
         <button type="submit" disabled={isLoading} className={styles.submitButton}>

@@ -106,8 +106,12 @@ export default function ImageModal({ postId, onClose, onDeleteSuccess }) {
         
         <div className={styles.commentSection}>
           <div className={styles.userInfo}>
-            <img src={post.avatar || '/Avatar.svg'} className={styles.commentAvatar} alt="유저" />
-            <span>{post.author || '작성자'}</span>
+            <img 
+              src={post.isAnon ? '/Avatar.svg' : (post.avatar || '/Avatar.svg')} 
+              className={styles.commentAvatar} 
+              alt="유저" 
+            />
+            <span>{post.isAnon ? '익명' : (post.author || '작성자')}</span>
             <img src="/other.svg" className={styles.other} alt="옵션" onClick={() => setShowDropdown(!showDropdown)} />
             {showDropdown && (
               <div className={styles.dropdown}>

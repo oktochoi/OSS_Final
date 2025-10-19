@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import ImageModal from '../components/ImageModal';
 import styles from '../styles/Mypage.module.css';
@@ -29,7 +28,12 @@ export default function HomePage() {
   const [viewMode, setViewMode] = useState('post'); // post or thread
   const [posts, setPosts] = useState([]);
   const [threads, setThreads] = useState([]);
+  const [verse, setVerse] = useState(null);
   const navigate = useNavigate();
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedPostId, setSelectedPostId] = useState(null); // 선택된 게시물의 ID를 저장
+  const [likedPosts, setLikedPosts] = useState({});
 
   // ❤️ 좋아요 토글
   const toggleLike = (src) => {
@@ -45,16 +49,6 @@ export default function HomePage() {
     setVerse(verses[randomIndex]);
   }, []);
 
-  // 🖼 게시물 GET
-  const fetchPosts = async () => {
-    try {
-      const res = await axios.get(POST_API);
-      setPosts(res.data);
-    } catch (err) {
-      console.error('게시물 불러오기 오류:', err);
-    }
-  };
-
   // 🧵 Thread GET
   const fetchThreads = async () => {
     try {
@@ -65,18 +59,41 @@ export default function HomePage() {
     }
   };
 
+  // 🖼 게시물 GET
+  const fetchPosts = async () => {
+      try {
+        const response = await fetch(POST_API);
+        if (!response.ok) {
+          throw new Error('데이터를 불러오는 데 실패했습니다.');
+        }
+        const data = await response.json();
+        setPosts(data.reverse()); // 최신순으로 정렬
+      } catch (error) {
+        console.error(error);
+        alert(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+  };
+
   useEffect(() => {
     if (viewMode === 'post') {
-      fetchPosts();
-    } else {
-      fetchThreads();
-    }
+        fetchPosts();
+      } else {
+        fetchThreads();
+      }
   }, [viewMode]);
 
-  // ✨ 최근 6개만 표시
-  const recentPosts = posts.slice(-6).reverse();
   const recentThreads = threads.slice(-6).reverse();
 
+  // 삭제 성공 시 목록에서 해당 포스트 제거
+  const removePostFromState = (deletedPostId) => {
+    setPosts(currentPosts => currentPosts.filter(post => post.id !== deletedPostId));
+  };
+  
+  if (isLoading) {
+    return <div>로딩 중입니다...</div>;
+  }
 
   return (
     <div className={styles.pageWrapper}>
@@ -132,55 +149,24 @@ export default function HomePage() {
         </div>
 
         {/* 📸 최근 6개 게시물 */}
+        
         {viewMode === 'post' && (
           <section className={styles.gridSection}>
             <div className={styles.grid}>
-              {recentPosts.length === 0 ? (
-                <p>게시물이 없습니다.</p>
-              ) : (
-                recentPosts.map((post) => (
-                  <div
-                    key={post.id}
-                    className={styles.post}
-                    onClick={() => setSelectedImage(post.image)}
-                  >
-                    <img src={post.image} alt={post.title} />
-                    <div className={styles.overlay}>
-                      <span className={styles.lc}>
-                        <img
-                          src={likedImages[post.image] ? 'reallove.svg' : 'love.svg'}
-                          alt="좋아요"
-                        />{' '}
-                        {post.likes}
-                      </span>
-                      <span className={styles.lc}>
-                        <img src="comments.svg" alt="댓글" /> 댓글
-                      </span>
-                    </div>
+              {posts.map((post) => (
+                <div key={post.id} className={styles.post} onClick={() => setSelectedPostId(post.id)}>
+                  <img src={post.image} alt={post.title} />
+                  <div className={styles.overlay}>
+                    <span className={styles.lc}>
+                      <img src={likedPosts[post.id] ? 'reallove.svg' : 'love.svg'} alt="좋아요" /> 좋아요
+                    </span>
+                    <span className={styles.lc}>
+                      <img src="comments.svg" alt="댓글" /> 댓글
+                    </span>
                   </div>
-                ))
-              )}
-            </div>
-            {posts.length > 6 && (
-              <div className={styles.moreBtnWrapper}>
-                <button onClick={() => navigate('/allimage')} className={styles.moreBtn}>
-                  📸 전체 사진 보기
-                </button>
-        <section className={styles.gridSection}>
-          <div className={styles.grid}>
-            {['/11.jpg', '/22.jpg', '/33.jpg', '4.jpg', '5.jpg', '6.jpg'].map((src, idx) => (
-              <div key={idx} className={styles.post} onClick={() => setSelectedImage(src)}>
-                <img src={src} alt={`게시물 ${idx + 1}`} />
-                <div className={styles.overlay}>
-                  <span className={styles.lc}>
-                    <img src={likedImages[src] ? 'reallove.svg' : 'love.svg'} alt="좋아요" /> 좋아요
-                  </span>
-                  <span className={styles.lc}>
-                    <img src="comments.svg" alt="댓글" /> 댓글
-                  </span>
                 </div>
-              </div>
-            )}
+              ))}
+            </div>
           </section>
         )}
 
@@ -252,6 +238,16 @@ export default function HomePage() {
           onClose={() => setSelectedImage(null)}
           liked={likedImages[selectedImage] || false}
           onLikeToggle={() => toggleLike(selectedImage)}
+        />
+      )}
+
+      {selectedPostId && (
+        <ImageModal
+          postId={selectedPostId}
+          onClose={() => setSelectedPostId(null)}
+          onDeleteSuccess={removePostFromState} 
+          // 좋아요 기능은 모달 안에서 자체적으로 처리하거나, 또는 postId 기반으로 전달할 수 있습니다.
+          // 우선 모달이 자체적으로 데이터를 불러오므로 이 부분은 단순화합니다.
         />
       )}
     </div>

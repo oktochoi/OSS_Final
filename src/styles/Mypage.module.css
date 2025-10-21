@@ -579,3 +579,125 @@ html, body {
   from { opacity: 0; transform: translateY(-4px); }
   to { opacity: 1; transform: translateY(0); }
 }
+/* ===============================
+   📱 프로필 섹션 반응형
+================================ */
+@media screen and (max-width: 1024px) {
+  .profileSection {
+    flex-direction: column;       /* 세로 정렬로 변경 */
+    align-items: center;          /* 가운데 정렬 */
+    text-align: center;
+    gap: 20px;                    /* 간격 조절 */
+    margin-bottom: 60px;
+  }
+
+  .avatar {
+    margin: 0;                    /* 가운데 정렬 위해 margin 제거 */
+    width: 150px;
+    height: 150px;
+  }
+
+  .profileInfo h2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+  }
+
+  .profileInfo button {
+    width: 100px;
+    height: 32px;
+    font-size: 13px;
+  }
+
+  .profileStat {
+    display: inline-block;
+    margin-right: 12px;
+    font-size: 13px;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .avatar {
+    width: 110px;
+    height: 110px;
+  }
+
+  .profileInfo h2 {
+    font-size: 16px;
+  }
+
+  .profileStat {
+    font-size: 12px;
+    margin-right: 8px;
+  }
+
+  .profileInfo button {
+    width: 90px;
+    height: 28px;
+    font-size: 12px;
+  }
+}
+/* 성경 구절 반응형 */
+@media screen and (max-width: 1024px) {
+  .verseSection {
+    max-width: 90%;
+    margin: 20px auto 0;
+    padding: 12px;
+  }
+
+  .verseSection h3 {
+    font-size: 16px;
+  }
+
+  .verseSection p {
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .verseSection {
+    max-width: 95%;
+    padding: 10px;
+  }
+
+  .verseSection h3 {
+    font-size: 15px;
+  }
+
+  .verseSection p {
+    font-size: 13px;
+  }
+}/* 성경 구절 반응형 */
+@media screen and (max-width: 1024px) {
+  .verseSection {
+    max-width: 90%;
+    margin: 20px auto 0;
+    padding: 12px;
+  }
+
+  .verseSection h3 {
+    font-size: 16px;
+  }
+
+  .verseSection p {
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .verseSection {
+    max-width: 95%;
+    padding: 10px;
+  }
+
+  .verseSection h3 {
+    font-size: 15px;
+  }
+
+  .verseSection p {
+    font-size: 13px;
+  }
+}
+

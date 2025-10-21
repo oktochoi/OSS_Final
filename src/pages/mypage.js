@@ -9,7 +9,7 @@ import axios from 'axios';
 const POST_API = 'https://68db332b23ebc87faa323c66.mockapi.io/Hanstagram';
 const THREAD_API = 'https://68ec478eeff9ad3b1401a745.mockapi.io/post';
 
-// ✅ verse url 대신 API용 path로 변경
+// ✅ 성경 구절 경로 목록
 const verses = [
   { path: 'kor-gen/1:1-1:1', ref: '창세기 1:1' },
   { path: 'kor-jhn/3:16-3:16', ref: '요한복음 3:16' },
@@ -26,7 +26,7 @@ export default function HomePage() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [likedImages, setLikedImages] = useState({});
   const [verse, setVerse] = useState(null);
-  const [verseContent, setVerseContent] = useState(''); // ✅ 실제 구절 텍스트
+  const [verseContent, setVerseContent] = useState('');
   const [viewMode, setViewMode] = useState('post');
   const [posts, setPosts] = useState([]);
   const [threads, setThreads] = useState([]);
@@ -42,20 +42,22 @@ export default function HomePage() {
     }));
   };
 
-  // 📖 랜덤 성경구절 + API 호출
+  // 📖 랜덤 성경 구절 불러오기
   useEffect(() => {
-    const randomIndex = Math.floor(Math.random() * verses.length);
-    const selected = verses[randomIndex];
-    setVerse(selected);
+  const randomIndex = Math.floor(Math.random() * verses.length);
+  const selected = verses[randomIndex];
+  setVerse(selected);
 
-    fetch(`/api/verse?path=${selected.path}`)
-      .then((res) => res.text())
-      .then((data) => setVerseContent(data))
-      .catch((err) => {
-        console.error('성경구절 불러오기 오류:', err);
-        setVerseContent('<p>구절을 불러오지 못했습니다.</p>');
-      });
-  }, []);
+  const proxy = 'https://corsproxy.io/?';
+  fetch(`${proxy}https://ibibles.net/quote.php?${selected.path}`)
+    .then((res) => res.text())
+    .then((data) => setVerseContent(data))
+    .catch((err) => {
+      console.error('성경구절 불러오기 오류:', err);
+      setVerseContent('<p>구절을 불러오지 못했습니다.</p>');
+    });
+}, []);
+
 
   // 🖼 게시물 GET
   const fetchPosts = async () => {
@@ -82,7 +84,7 @@ export default function HomePage() {
     else fetchThreads();
   }, [viewMode]);
 
-  // 외부 클릭 시 토글 닫기 + ESC 닫기
+  // 외부 클릭 시 드롭다운 닫기 + ESC 닫기
   useEffect(() => {
     const onDocClick = (e) => {
       if (!e.target.closest?.(`.${styles.moreWrapper}`)) {
@@ -152,8 +154,8 @@ export default function HomePage() {
               </Link>
             </h2>
             <span className={styles.profileStat}>게시물 {posts.length}</span>
-            <span className={styles.profileStat}>팔로워 0 </span>
-            <span className={styles.profileStat}>팔로우 0 </span>
+            <span className={styles.profileStat}>팔로워 0</span>
+            <span className={styles.profileStat}>팔로우 0</span>
 
             {/* ✅ 오늘의 구절 */}
             <div className={styles.verseSection}>
@@ -272,7 +274,7 @@ export default function HomePage() {
                                 setSelectedThread(null);
                               }}
                             >
-                              ✏️ 수정
+                              수정
                             </button>
                             <button
                               onClick={() => {
@@ -282,7 +284,7 @@ export default function HomePage() {
                                 }
                               }}
                             >
-                              🗑 삭제
+                              삭제
                             </button>
                           </div>
                         )}
@@ -304,7 +306,7 @@ export default function HomePage() {
             {threads.length > 0 && (
               <div className={styles.moreBtnWrapper}>
                 <button onClick={() => navigate('/allthread')} className={styles.moreBtn}>
-                  🧵 전체 Thread 보기
+                  전체 Thread 보기
                 </button>
               </div>
             )}

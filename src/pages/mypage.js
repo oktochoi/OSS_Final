@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import ImageModal from '../components/ImageModal';
 import styles from '../styles/Mypage.module.css';
@@ -10,25 +9,29 @@ import axios from 'axios';
 const POST_API = 'https://68db332b23ebc87faa323c66.mockapi.io/Hanstagram';
 const THREAD_API = 'https://68ec478eeff9ad3b1401a745.mockapi.io/post';
 
+// ✅ 성경 구절 경로 목록
 const verses = [
-  { url: "http://ibibles.net/quote.php?kor-gen/1:1-1:1", ref: "창세기 1:1" },
-  { url: "http://ibibles.net/quote.php?kor-jhn/3:16-3:16", ref: "요한복음 3:16" },
-  { url: "http://ibibles.net/quote.php?kor-rom/8:28-8:28", ref: "로마서 8:28" },
-  { url: "http://ibibles.net/quote.php?kor-psa/23:1-23:1", ref: "시편 23:1" },
-  { url: "http://ibibles.net/quote.php?kor-mat/5:9-5:9", ref: "마태복음 5:9" },
-  { url: "http://ibibles.net/quote.php?kor-phi/4:13-4:13", ref: "빌립보서 4:13" },
-  { url: "http://ibibles.net/quote.php?kor-jer/29:11-29:11", ref: "예레미야 29:11" },
-  { url: "http://ibibles.net/quote.php?kor-isa/41:10-41:10", ref: "이사야 41:10" }
+  { path: 'kor-gen/1:1-1:1', ref: '창세기 1:1' },
+  { path: 'kor-jhn/3:16-3:16', ref: '요한복음 3:16' },
+  { path: 'kor-rom/8:28-8:28', ref: '로마서 8:28' },
+  { path: 'kor-psa/23:1-23:1', ref: '시편 23:1' },
+  { path: 'kor-mat/5:9-5:9', ref: '마태복음 5:9' },
+  { path: 'kor-phi/4:13-4:13', ref: '빌립보서 4:13' },
+  { path: 'kor-jer/29:11-29:11', ref: '예레미야 29:11' },
+  { path: 'kor-isa/41:10-41:10', ref: '이사야 41:10' }
 ];
 
 export default function HomePage() {
   const { name, profileImage } = useUserStore();
   const [selectedImage, setSelectedImage] = useState(null);
   const [likedImages, setLikedImages] = useState({});
-
-  const [viewMode, setViewMode] = useState('post'); // post or thread
+  const [verse, setVerse] = useState(null);
+  const [verseContent, setVerseContent] = useState('');
+  const [viewMode, setViewMode] = useState('post');
   const [posts, setPosts] = useState([]);
   const [threads, setThreads] = useState([]);
+  const [selectedThread, setSelectedThread] = useState(null);
+
   const navigate = useNavigate();
 
   // ❤️ 좋아요 토글
@@ -39,11 +42,22 @@ export default function HomePage() {
     }));
   };
 
-  // 📖 랜덤 성경구절
+  // 📖 랜덤 성경 구절 불러오기
   useEffect(() => {
-    const randomIndex = Math.floor(Math.random() * verses.length);
-    setVerse(verses[randomIndex]);
-  }, []);
+  const randomIndex = Math.floor(Math.random() * verses.length);
+  const selected = verses[randomIndex];
+  setVerse(selected);
+
+  const proxy = 'https://corsproxy.io/?';
+  fetch(`${proxy}https://ibibles.net/quote.php?${selected.path}`)
+    .then((res) => res.text())
+    .then((data) => setVerseContent(data))
+    .catch((err) => {
+      console.error('성경구절 불러오기 오류:', err);
+      setVerseContent('<p>구절을 불러오지 못했습니다.</p>');
+    });
+}, []);
+
 
   // 🖼 게시물 GET
   const fetchPosts = async () => {
@@ -66,17 +80,64 @@ export default function HomePage() {
   };
 
   useEffect(() => {
-    if (viewMode === 'post') {
-      fetchPosts();
-    } else {
-      fetchThreads();
-    }
+    if (viewMode === 'post') fetchPosts();
+    else fetchThreads();
   }, [viewMode]);
 
-  // ✨ 최근 6개만 표시
+  // 외부 클릭 시 드롭다운 닫기 + ESC 닫기
+  useEffect(() => {
+    const onDocClick = (e) => {
+      if (!e.target.closest?.(`.${styles.moreWrapper}`)) {
+        setSelectedThread(null);
+      }
+    };
+    const onEsc = (e) => {
+      if (e.key === 'Escape') setSelectedThread(null);
+    };
+    document.addEventListener('click', onDocClick);
+    document.addEventListener('keydown', onEsc);
+    return () => {
+      document.removeEventListener('click', onDocClick);
+      document.removeEventListener('keydown', onEsc);
+    };
+  }, []);
+
+  // ✏️ Thread 수정
+  const handleEdit = async (id, newTitle, newContent) => {
+    try {
+      const editedAt = new Date().toISOString();
+      await axios.put(`${THREAD_API}/${id}`, {
+        title: newTitle,
+        content: newContent,
+        editedAt,
+      });
+      setThreads((prev) =>
+        prev.map((t) =>
+          t.id === id
+            ? { ...t, title: newTitle, content: newContent, editedAt }
+            : t
+        )
+      );
+      alert('✅ 수정이 완료되었습니다.');
+    } catch (err) {
+      console.error('Thread 수정 오류:', err);
+      alert('⚠ Thread 수정 중 오류가 발생했습니다.');
+    }
+  };
+
+  // 🗑 Thread 삭제
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${THREAD_API}/${id}`);
+      setThreads((prev) => prev.filter((t) => t.id !== id));
+      alert('🗑 Thread가 삭제되었습니다.');
+    } catch (err) {
+      console.error('Thread 삭제 오류:', err);
+    }
+  };
+
   const recentPosts = posts.slice(-6).reverse();
   const recentThreads = threads.slice(-6).reverse();
-
 
   return (
     <div className={styles.pageWrapper}>
@@ -93,20 +154,19 @@ export default function HomePage() {
               </Link>
             </h2>
             <span className={styles.profileStat}>게시물 {posts.length}</span>
-            <span className={styles.profileStat}>팔로워 0 </span>
-            <span className={styles.profileStat}>팔로우 0 </span><br />
-            <div>
+            <span className={styles.profileStat}>팔로워 0</span>
+            <span className={styles.profileStat}>팔로우 0</span>
+
+            {/* ✅ 오늘의 구절 */}
+            <div className={styles.verseSection}>
               <h3>오늘의 구절 📖</h3>
               {verse && (
                 <>
-                  <p style={{ fontWeight: 'bold', marginBottom: '8px' }}>{verse.ref}</p>
-                  <iframe
-                    src={verse.url}
-                    width="600"
-                    height="100"
-                    style={{ border: 'none' }}
-                    title="성경 구절"
-                  ></iframe>
+                  <p>{verse.ref}</p>
+                  <div
+                    className={styles.verseBox}
+                    dangerouslySetInnerHTML={{ __html: verseContent }}
+                  />
                 </>
               )}
             </div>
@@ -115,7 +175,7 @@ export default function HomePage() {
 
         <hr className={styles.divider} />
 
-        {/* 🪄 뷰 선택 버튼 */}
+        {/* 뷰 선택 */}
         <div className={styles.viewButtons}>
           <button
             onClick={() => setViewMode('post')}
@@ -131,8 +191,8 @@ export default function HomePage() {
           </button>
         </div>
 
-        {/* 📸 최근 6개 게시물 */}
-        {viewMode === 'post' && (
+        {/* 게시물 or Thread 렌더링 */}
+        {viewMode === 'post' ? (
           <section className={styles.gridSection}>
             <div className={styles.grid}>
               {recentPosts.length === 0 ? (
@@ -142,7 +202,7 @@ export default function HomePage() {
                   <div
                     key={post.id}
                     className={styles.post}
-                    onClick={() => setSelectedImage(post.image)}
+                    onClick={() => setSelectedImage(post)}
                   >
                     <img src={post.image} alt={post.title} />
                     <div className={styles.overlay}>
@@ -161,83 +221,92 @@ export default function HomePage() {
                 ))
               )}
             </div>
-            {posts.length > 6 && (
-              <div className={styles.moreBtnWrapper}>
-                <button onClick={() => navigate('/allimage')} className={styles.moreBtn}>
-                  📸 전체 사진 보기
-                </button>
-        <section className={styles.gridSection}>
-          <div className={styles.grid}>
-            {['/11.jpg', '/22.jpg', '/33.jpg', '4.jpg', '5.jpg', '6.jpg'].map((src, idx) => (
-              <div key={idx} className={styles.post} onClick={() => setSelectedImage(src)}>
-                <img src={src} alt={`게시물 ${idx + 1}`} />
-                <div className={styles.overlay}>
-                  <span className={styles.lc}>
-                    <img src={likedImages[src] ? 'reallove.svg' : 'love.svg'} alt="좋아요" /> 좋아요
-                  </span>
-                  <span className={styles.lc}>
-                    <img src="comments.svg" alt="댓글" /> 댓글
-                  </span>
-                </div>
-              </div>
-            )}
           </section>
-        )}
-
-        {/* 🧵 최근 6개 Thread */}
-        {viewMode === 'thread' && (
+        ) : (
           <section className={styles.threadSection}>
             {recentThreads.length === 0 ? (
               <p className={styles.noThread}>Thread가 없습니다.</p>
             ) : (
               recentThreads.map((t) => {
-                const initials =
-                  t.isAnon === 'true' || t.isAnon === true
-                    ? '익명'
-                    : (t.author?.[0] ?? 'U');
-
+                const isAnon = t.isAnon === 'true' || t.isAnon === true;
                 return (
                   <article key={t.id} className={styles.threadCard}>
                     <div className={styles.threadHeader}>
-                      <div className={styles.threadAvatar}>{initials}</div>
+                      <div className={styles.threadAvatar}>
+                        {isAnon ? (
+                          <span>익명</span>
+                        ) : (
+                          <img src={profileImage} alt="avatar" className={styles.avatarImg} />
+                        )}
+                      </div>
                       <div className={styles.threadMeta}>
-                        <span className={styles.threadAuthor}>{t.author}</span>
+                        <span className={styles.threadAuthor}>
+                          {isAnon ? '익명' : t.author || name}
+                        </span>
                         <time className={styles.threadTime}>
                           {new Date(t.createdAt).toLocaleString()}
+                          {t.editedAt && (
+                            <span className={styles.editedTime}>
+                              {' '}· 수정됨 {new Date(t.editedAt).toLocaleString()}
+                            </span>
+                          )}
                         </time>
                       </div>
-                      <button className={styles.threadMoreBtn}>⋯</button>
+                      <div className={styles.moreWrapper}>
+                        <button
+                          className={styles.threadMoreBtn}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedThread(selectedThread === t.id ? null : t.id);
+                          }}
+                        >
+                          ⋯
+                        </button>
+                        {selectedThread === t.id && (
+                          <div className={styles.dropdownMenu}>
+                            <button
+                              onClick={() => {
+                                const newTitle = prompt('새 제목을 입력하세요:', t.title || '');
+                                if (newTitle === null) return;
+                                const newContent = prompt('새 내용을 입력하세요:', t.content || '');
+                                if (newContent === null) return;
+                                handleEdit(t.id, newTitle, newContent);
+                                setSelectedThread(null);
+                              }}
+                            >
+                              수정
+                            </button>
+                            <button
+                              onClick={() => {
+                                if (window.confirm('정말 삭제하시겠습니까?')) {
+                                  handleDelete(t.id);
+                                  setSelectedThread(null);
+                                }
+                              }}
+                            >
+                              삭제
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
-
                     {t.title && <h3 className={styles.threadTitle}>{t.title}</h3>}
                     <div className={styles.threadContent}>{t.content}</div>
-
                     <div className={styles.threadBadges}>
-                      {t.isAnon === 'true' || t.isAnon === true ? (
+                      {isAnon ? (
                         <span className={`${styles.badge} ${styles.badgeAnon}`}>익명</span>
                       ) : (
-                        <span className={styles.badge}>작성자</span>
+                        <span className={styles.badge}>{t.author || name}</span>
                       )}
-                    </div>
-
-                    <div className={styles.threadActions}>
-                      <button className={styles.actionBtn}>
-                        <img src="love.svg" alt="" width="16" /> 좋아요 {t.likes ?? 0}
-                      </button>
-                      <button className={styles.actionBtn}>
-                        <img src="comments.svg" alt="" width="16" /> 댓글
-                      </button>
-                      <div className={styles.actionsSpacer} />
-                      <button className={styles.actionBtn}>↗ 공유</button>
                     </div>
                   </article>
                 );
               })
             )}
-            {threads.length > 6 && (
+            {threads.length > 0 && (
               <div className={styles.moreBtnWrapper}>
                 <button onClick={() => navigate('/allthread')} className={styles.moreBtn}>
-                  🧵 전체 Thread 보기
+                  전체 Thread 보기
                 </button>
               </div>
             )}
@@ -248,10 +317,10 @@ export default function HomePage() {
       {/* 이미지 클릭 시 모달 */}
       {selectedImage && (
         <ImageModal
-          src={selectedImage}
+          post={selectedImage}
           onClose={() => setSelectedImage(null)}
-          liked={likedImages[selectedImage] || false}
-          onLikeToggle={() => toggleLike(selectedImage)}
+          liked={likedImages[selectedImage?.image] || false}
+          onLikeToggle={() => toggleLike(selectedImage?.image)}
         />
       )}
     </div>

@@ -4,11 +4,7 @@ import styles from '../styles/Sidebar.module.css';
 export default function Sidebar() {
   return (
     <aside className={styles.sidebar}>
-      <img
-        src="logo.png"
-        alt="인스타그램 로고"
-        className={`${styles.logo} ${styles.desktopOnly}`}
-      />
+      <h1 className={`${styles.log1} ${styles.desktopOnly}`}>ℌ𝔞𝔫𝔰𝔱𝔞𝔯𝔤𝔯𝔞𝔪</h1>
       <img
         src="instalogo.png"
         alt="인스타그램 아이콘"

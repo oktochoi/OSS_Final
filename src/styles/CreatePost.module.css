@@ -74,3 +74,39 @@
   background-color: #b2dffc;
   cursor: not-allowed;
 }
+.formGroupCheckbox label {
+  color: #000; /* ✅ 검은 글씨 */
+  font-weight: 500; /* 약간 진하게 (선택 사항) */
+  cursor: pointer;
+}
+
+.formGroupCheckbox input {
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+/* ✅ 미리보기 영역 */
+.previewWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  overflow: hidden;          /* 박스 밖 넘는 부분 숨김 */
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  max-width: 400px;          /* ✅ 최대 가로 크기 */
+  max-height: 400px;         /* ✅ 최대 세로 크기 */
+  width: 100%;
+  background: #fafafa;
+}
+
+/* ✅ 미리보기 이미지 */
+.previewImage {
+  width: 100%;
+  height: auto;
+  max-width: 400px;          /* ✅ 실제 이미지 최대 가로 크기 */
+  max-height: 400px;         /* ✅ 실제 이미지 최대 세로 크기 */
+  object-fit: contain;       /* ✅ 이미지 비율 유지하며 축소 */
+  border-radius: 10px;
+}

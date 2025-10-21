@@ -15,7 +15,6 @@ export default function CreatePost() {
   const {
     register,
     handleSubmit,
-    watch,
     reset,
     formState: { isSubmitting, errors },
   } = useForm({

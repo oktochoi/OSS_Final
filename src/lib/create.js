@@ -23,6 +23,7 @@ export default function CreatePostLib() {
       setPreview(previewUrl);
     }
   };
+  console.log(image);
 
   /** 📨 제출 */
   const handleSubmit = async (e) => {

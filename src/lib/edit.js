@@ -15,6 +15,7 @@ export default function EditPost() {
   const navigate = useNavigate();
 
   const MOCK_API_URL = `https://68db332b23ebc87faa323c66.mockapi.io/Hanstagram/${postId}`;
+  console.log(image);
 
   /** 🔹 기존 게시물 데이터 불러오기 */
   useEffect(() => {

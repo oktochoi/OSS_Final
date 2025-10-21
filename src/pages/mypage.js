@@ -30,12 +30,7 @@ export default function HomePage() {
   const [viewMode, setViewMode] = useState('post');
   const [posts, setPosts] = useState([]);
   const [threads, setThreads] = useState([]);
-<<<<<<< HEAD
-  const [verse, setVerse] = useState(null);
-=======
   const [selectedThread, setSelectedThread] = useState(null);
-
->>>>>>> d6d99d76eb998acc830bbcfb94149d185db54f69
   const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -95,26 +90,6 @@ export default function HomePage() {
   };
 
   useEffect(() => {
-<<<<<<< HEAD
-    if (viewMode === 'post') {
-        fetchPosts();
-      } else {
-        fetchThreads();
-      }
-  }, [viewMode]);
-
-  const recentThreads = threads.slice(-6).reverse();
-
-  // 삭제 성공 시 목록에서 해당 포스트 제거
-  const removePostFromState = (deletedPostId) => {
-    setPosts(currentPosts => currentPosts.filter(post => post.id !== deletedPostId));
-  };
-  
-  if (isLoading) {
-    return <div>로딩 중입니다...</div>;
-  }
-
-=======
     if (viewMode === 'post') fetchPosts();
     else fetchThreads();
   }, [viewMode]);
@@ -173,8 +148,6 @@ export default function HomePage() {
 
   const recentPosts = posts.slice(-6).reverse();
   const recentThreads = threads.slice(-6).reverse();
-
->>>>>>> d6d99d76eb998acc830bbcfb94149d185db54f69
   return (
     <div className={styles.pageWrapper}>
       <Sidebar />
@@ -227,26 +200,6 @@ export default function HomePage() {
           </button>
         </div>
 
-<<<<<<< HEAD
-        {/* 📸 최근 6개 게시물 */}
-        
-        {viewMode === 'post' && (
-          <section className={styles.gridSection}>
-            <div className={styles.grid}>
-              {posts.map((post) => (
-                <div key={post.id} className={styles.post} onClick={() => setSelectedPostId(post.id)}>
-                  <img src={post.image} alt={post.title} />
-                  <div className={styles.overlay}>
-                    <span className={styles.lc}>
-                      <img src={likedPosts[post.id] ? 'reallove.svg' : 'love.svg'} alt="좋아요" /> 좋아요
-                    </span>
-                    <span className={styles.lc}>
-                      <img src="comments.svg" alt="댓글" /> 댓글
-                    </span>
-                  </div>
-                </div>
-              ))}
-=======
         {/* 게시물 or Thread 렌더링 */}
         {viewMode === 'post' ? (
           <section className={styles.gridSection}>
@@ -276,7 +229,6 @@ export default function HomePage() {
                   </div>
                 ))
               )}
->>>>>>> d6d99d76eb998acc830bbcfb94149d185db54f69
             </div>
           </section>
         ) : (

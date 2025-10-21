@@ -41,7 +41,7 @@ export default function CreatePostLib() {
       likes: 0, // 새 게시물이므로 '좋아요'는 0으로 시작
       isAnon: isAnon
     };
-    
+
     try {
       // MockAPI는 파일 업로드를 지원하지 않으므로 URL만 전송
       const imageUrl = preview || '';
@@ -128,19 +128,6 @@ export default function CreatePostLib() {
             className={styles.textarea}
           />
         </div>
-<<<<<<< HEAD
-        <div className={styles.formGroup}>
-          <label htmlFor="content">익명표시</label>
-          <input 
-            type = "checkbox"
-            id="isAnon"
-            checked={isAnon}
-            onChange={(e) => setAnon(e.target.checked)}
-            className={styles.checkbox}
-          />
-        </div>
-        <button type="submit" disabled={isLoading} className={styles.submitButton}>
-=======
 
         {/* ✅ 익명 여부 */}
         <div className={styles.formGroupCheckbox}>
@@ -173,7 +160,6 @@ export default function CreatePostLib() {
           disabled={isLoading}
           className={styles.submitButton}
         >
->>>>>>> d6d99d76eb998acc830bbcfb94149d185db54f69
           {isLoading ? '게시 중...' : '게시하기'}
         </button>
       </form>

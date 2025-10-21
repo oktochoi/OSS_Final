@@ -29,11 +29,13 @@ export default function HomePage() {
   const [posts, setPosts] = useState([]);
   const [threads, setThreads] = useState([]);
   const [verse, setVerse] = useState(null);
+  const [postSortOrder, setPostSortOrder] = useState('newest');
   const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(true);
   const [selectedPostId, setSelectedPostId] = useState(null); // 선택된 게시물의 ID를 저장
   const [likedPosts, setLikedPosts] = useState({});
+  
 
   // ❤️ 좋아요 토글
   const toggleLike = (src) => {
@@ -67,7 +69,7 @@ export default function HomePage() {
           throw new Error('데이터를 불러오는 데 실패했습니다.');
         }
         const data = await response.json();
-        setPosts(data.reverse()); // 최신순으로 정렬
+        setPosts(data);
       } catch (error) {
         console.error(error);
         alert(error.message);
@@ -75,6 +77,18 @@ export default function HomePage() {
         setIsLoading(false);
       }
   };
+
+  const sortedPosts = [...posts].sort((a, b) => {
+    // post 객체에 createdAt이 있다고 가정합니다.
+    const dateA = new Date(a.createdAt); 
+    const dateB = new Date(b.createdAt);
+    
+    if (postSortOrder === 'newest') {
+      return dateB - dateA; // 최신순
+    } else {
+      return dateA - dateB; // 오래된순
+    }
+  });
 
   useEffect(() => {
     if (viewMode === 'post') {
@@ -147,13 +161,28 @@ export default function HomePage() {
             🧵 Thread 보기
           </button>
         </div>
+        
+
+        {/* 정렬 선택 드롭다운 */}
+        {viewMode === 'post' && (
+          <div className= {styles.sortContainer}>
+            <select 
+              onChange={(e) => setPostSortOrder(e.target.value)} 
+              value={postSortOrder}
+              style={{ padding: '8px', borderRadius: '5px', border: '1px solid #dbdbdb' }}
+            >
+              <option value="newest">최신순</option>
+              <option value="oldest">오래된순</option>
+            </select>
+          </div>
+        )}
 
         {/* 📸 최근 6개 게시물 */}
         
         {viewMode === 'post' && (
           <section className={styles.gridSection}>
             <div className={styles.grid}>
-              {posts.map((post) => (
+              {sortedPosts.map((post) => (
                 <div key={post.id} className={styles.post} onClick={() => setSelectedPostId(post.id)}>
                   <img src={post.image} alt={post.title} />
                   <div className={styles.overlay}>

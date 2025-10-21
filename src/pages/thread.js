@@ -26,9 +26,6 @@ export default function CreatePost() {
     },
   });
 
-  // 익명 체크 값 실시간 확인 가능 (선택 사항)
-  const isAnonValue = watch('isAnon');
-
   /** 📨 게시물 전송 함수 */
   const onSubmit = async (data) => {
     const newPost = {

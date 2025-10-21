@@ -4,7 +4,6 @@ import styles from '../styles/CreatePost.module.css'; // CreatePost의 스타일
 
 export default function EditPost() {
   const [title, setTitle] = useState('');
-  const [image, setImage] = useState(null); // 실제 파일 객체
   const [preview, setPreview] = useState(null); // 미리보기 URL
   const [content, setContent] = useState('');
   const [isAnon, setIsAnon] = useState(false);

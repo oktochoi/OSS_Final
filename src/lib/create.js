@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../styles/CreatePost.module.css';
 
-export default function CreatePost1() {
+export default function CreatePostLib() {
   const [title, setTitle] = useState('');
+  const [image, setImage] = useState(null); // 실제 File 객체
   const [preview, setPreview] = useState(null); // 미리보기 URL
   const [content, setContent] = useState('');
   const [isAnon, setIsAnon] = useState(false); // ✅ 익명 여부

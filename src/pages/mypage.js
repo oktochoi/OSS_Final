@@ -33,7 +33,8 @@ export default function HomePage() {
   const [selectedThread, setSelectedThread] = useState(null);
   const navigate = useNavigate();
 
-  const [selectedPostId, setSelectedPostId] = useState(null); // 선택된 게시물의 ID를 저장
+  const [postSortOrder, setPostSortOrder] = useState('newest');
+  const [threadSortOrder, setThreadSortOrder] = useState('newest');
 
   // ❤️ 좋아요 토글
   const toggleLike = (src) => {
@@ -78,7 +79,7 @@ export default function HomePage() {
           throw new Error('데이터를 불러오는 데 실패했습니다.');
         }
         const data = await response.json();
-        setPosts(data.reverse()); // 최신순으로 정렬
+        setPosts(data);
       } catch (error) {
         console.error(error);
         alert(error.message);
@@ -146,8 +147,28 @@ export default function HomePage() {
     }
   };
 
-  const recentPosts = posts.slice(-6).reverse();
-  const recentThreads = threads.slice(-6).reverse();
+  const sortedPosts = [...posts].sort((a, b) => {
+    const dateA = new Date(a.createdAt);
+    const dateB = new Date(b.createdAt);
+    if (postSortOrder === 'newest') {
+      return dateB - dateA; // 최신순
+    }
+    return dateA - dateB; // 오래된순
+  });
+  // 정렬된 목록에서 6개만 표시
+  const displayedPosts = sortedPosts.slice(0, 6);
+
+  // ✅ Thread 정렬 로직
+  const sortedThreads = [...threads].sort((a, b) => {
+    const dateA = new Date(a.createdAt);
+    const dateB = new Date(b.createdAt);
+    if (threadSortOrder === 'newest') {
+      return dateB - dateA; // 최신순
+    }
+    return dateA - dateB; // 오래된순
+  });
+  const displayedThreads = sortedThreads.slice(0, 6);
+
   return (
     <div className={styles.pageWrapper}>
       <Sidebar />
@@ -184,6 +205,28 @@ export default function HomePage() {
 
         <hr className={styles.divider} />
 
+        <div style={{ textAlign: 'right', margin: '10px 20px 0' }}>
+          {viewMode === 'post' ? (
+            <select
+              onChange={(e) => setPostSortOrder(e.target.value)}
+              value={postSortOrder}
+              style={{ padding: '8px', borderRadius: '5px', border: '1px solid #dbdbdb' }}
+            >
+              <option value="newest">최신순</option>
+              <option value="oldest">오래된순</option>
+            </select>
+          ) : (
+            <select
+              onChange={(e) => setThreadSortOrder(e.target.value)}
+              value={threadSortOrder}
+              style={{ padding: '8px', borderRadius: '5px', border: '1px solid #dbdbdb' }}
+            >
+              <option value="newest">최신순</option>
+              <option value="oldest">오래된순</option>
+            </select>
+          )}
+        </div>
+
         {/* 뷰 선택 */}
         <div className={styles.viewButtons}>
           <button
@@ -204,10 +247,11 @@ export default function HomePage() {
         {viewMode === 'post' ? (
           <section className={styles.gridSection}>
             <div className={styles.grid}>
-              {recentPosts.length === 0 ? (
+              {/* ✅ displayedPosts 사용 */}
+              {displayedPosts.length === 0 ? (
                 <p>게시물이 없습니다.</p>
               ) : (
-                recentPosts.map((post) => (
+                displayedPosts.map((post) => (
                   <div
                     key={post.id}
                     className={styles.post}
@@ -233,10 +277,11 @@ export default function HomePage() {
           </section>
         ) : (
           <section className={styles.threadSection}>
-            {recentThreads.length === 0 ? (
+            {/* ✅ displayedThreads 사용 */}
+            {displayedThreads.length === 0 ? (
               <p className={styles.noThread}>Thread가 없습니다.</p>
             ) : (
-              recentThreads.map((t) => {
+              displayedThreads.map((t) => {
                 const isAnon = t.isAnon === 'true' || t.isAnon === true;
                 return (
                   <article key={t.id} className={styles.threadCard}>
@@ -330,16 +375,6 @@ export default function HomePage() {
           onClose={() => setSelectedImage(null)}
           liked={likedImages[selectedImage?.image] || false}
           onLikeToggle={() => toggleLike(selectedImage?.image)}
-        />
-      )}
-
-      {selectedPostId && (
-        <ImageModal
-          postId={selectedPostId}
-          onClose={() => setSelectedPostId(null)}
-          onDeleteSuccess={removePostFromState} 
-          // 좋아요 기능은 모달 안에서 자체적으로 처리하거나, 또는 postId 기반으로 전달할 수 있습니다.
-          // 우선 모달이 자체적으로 데이터를 불러오므로 이 부분은 단순화합니다.
         />
       )}
     </div>

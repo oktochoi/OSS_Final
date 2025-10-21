@@ -1,0 +1,10 @@
+{
+  "builds": [
+    { "src": "api/verse.js", "use": "@vercel/node" },
+    { "src": "package.json", "use": "@vercel/static-build" }
+  ],
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

@@ -3,10 +3,10 @@ import { Routes, Route } from 'react-router-dom'
 import RegisterPage from './pages/registerpage'
 import MyPage from './pages/mypage'
 import InfoEditPage from './pages/info';  
-import CreateThread from './pages/thread';
-import CreatePost from './lib/create'
+import CreatePost from './pages/thread';
+import CreatePostLib from './lib/create'
 import EditPost from './lib/edit';
-import SearchPage from './pages/searchpage';
+import AllThread from './pages/allthread';
 
 export default function App() {
   return (
@@ -14,10 +14,10 @@ export default function App() {
       <Route path="/" element={<RegisterPage />} />
       <Route path="/mypage" element={<MyPage />} />
       <Route path="/info" element={<InfoEditPage />} />
-      <Route path="/thread" element={<CreateThread />} />
-      <Route path="/create" element={ <CreatePost /> } /> 
+      <Route path="/thread" element={<CreatePost />} />
+      <Route path="/create" element={ <CreatePostLib /> } /> 
       <Route path="/edit/:postId" element={<EditPost />} />
-      <Route path="/search" element={<SearchPage />} />
+      <Route path="/allthread" element={<AllThread />} />
     </Routes>
   )
 }

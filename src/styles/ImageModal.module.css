@@ -1,20 +1,19 @@
+
 .overlay {
   position: fixed; 
-  top: 0;
-  left: 0;
-  width: 100vw;     
-  height: 100vh;    
-  background-color: rgba(0, 0, 0, 0.65); 
+  left: 20%;
+  top: 59px;
+  width: 80vw;     
+  height: 60vh;    
+  background-color: transparent; 
   display: flex;
-  justify-content: center; 
-  align-items: center;     
   z-index: 1000;
 }
 
 .modal {
   display: flex;
-  width: 950px;
-  height: 800px;
+  width: 708px;
+  height: 550px;
   background-color: #000;
   overflow: hidden;
 }
@@ -27,8 +26,8 @@
 
 .imageSection img {
   width: 100%;
-  height: 100%;
-  object-fit: contain;
+  height: 729px;
+  object-fit: cover;
 }
 
 .commentSection {
@@ -97,7 +96,6 @@
   border-top: 1px solid #222;
   padding-top: 12px;
   padding-bottom: 12px;
-  margin-top: auto; 
 }
 
 .commentbar {
@@ -138,55 +136,54 @@
   cursor: pointer;
 }
 
-.status {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  color: white;
+
+.moreWrapper {
+  position: relative;
+  margin-left: auto;
+}
+
+.moreBtn {
+  background: none;
+  border: none;
+  color: #fff;
   font-size: 1.5rem;
+  cursor: pointer;
 }
 
-.postContent {
-  padding: 16px;
-  border-bottom: 1px solid #faf8f8;
-}
-
-.postContent p {
-  margin: 0;
-  font-size: 14px;
-  color: #a9a7a7;
-}
-
-.dropdown {
+.dropdownMenu {
   position: absolute;
-  top: 100%; 
-  right: 0; 
-  z-index: 1001; 
-  
-  background-color: #262626; 
-  border: 1px solid #363636;
-  border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-  padding: 4px 0;
-  min-width: 120px;
+  top: 22px;
+  right: 0;
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
-  margin-top: 5px; 
+  z-index: 10;
+  animation: fadeIn 0.15s ease;
+  min-width: 100px;
 }
 
-.dropdown button {
-  background: none; 
-  border: none; 
-  color: white; 
-  text-align: center;
-  padding: 8px 15px;
+.dropdownMenu button {
+  background: none;
+  border: none;
+  color: white;
+  text-align: left;
+  padding: 8px 12px;
   cursor: pointer;
-  font-size: 14px;
-  width: 100%; 
+  font-size: 0.9rem;
 }
 
-.dropdown button:hover {
-  background-color: #3e3e3e; 
+.dropdownMenu button:hover {
+  background: #444;
 }
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }

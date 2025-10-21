@@ -1,147 +1,128 @@
 'use client';
 
-import { useState, useEffect } from 'react'; 
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../styles/ImageModal.module.css';
+import { useUserStore } from '../store/userStore';
 
-// props로 postId, onClose, onDeleteSuccess를 받습니다.
-export default function ImageModal({ postId, onClose, onDeleteSuccess }) {
-  // 2. 데이터 fetching을 위한 상태 추가
-  const [post, setPost] = useState(null); // API에서 받아온 게시물 상세 정보
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [isLiked, setIsLiked] = useState(false);
-
-  // 댓글 관련 상태는 그대로 유지
+export default function ImageModal({ post, onClose, liked, onLikeToggle }) {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
-  const [showDropdown, setShowDropdown] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
   const navigate = useNavigate();
 
-  // postId가 바뀔 때마다 API에서 상세 데이터를 가져오는 useEffect
-  useEffect(() => {
-    // postId가 없으면 아무 작업도 하지 않음
-    if (!postId) return;
+  // ✅ Zustand에서 로그인된 유저 정보 불러오기
+  const { name, profileImage } = useUserStore();
 
-    const fetchPostDetails = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const response = await fetch(`https://68db332b23ebc87faa323c66.mockapi.io/Hanstagram/${postId}`);
-        if (!response.ok) {
-          throw new Error('게시물 정보를 불러올 수 없습니다.');
-        }
-        const data = await response.json();
-        setPost(data); // 받아온 데이터로 post 상태 업데이트
-      } catch (err) {
-        setError(err.message);
-        console.error(err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const MOCK_API_URL = 'https://68db332b23ebc87faa323c66.mockapi.io/Hanstagram';
 
-    fetchPostDetails();
-  }, [postId]); // postId가 변경될 때마다 이 효과를 다시 실행
-
-  // 삭제 핸들러 
-  const handleDelete = async () => {
-    if (!post) return;
-    const confirmDelete = window.confirm('정말로 이 게시물을 삭제하시겠습니까?');
-    if (confirmDelete) {
-      try {
-        const response = await fetch(`https://68db332b23ebc87faa323c66.mockapi.io/Hanstagram/${post.id}`, {
-          method: 'DELETE',
-        });
-        if (!response.ok) throw new Error('삭제에 실패했습니다.');
-        alert('게시물이 삭제되었습니다.');
-        onDeleteSuccess(post.id);
-        onClose();
-      } catch (error) {
-        alert(error.message);
-      }
-    }
-  };
-
-  //수정 핸들러 
-  const handleEdit = () => {
-    if (!post) return;
-    navigate(`/edit/${post.id}`);
-  };
-
-  // 댓글 게시 핸들러
+  // ✅ 댓글 추가 시 Zustand의 사용자 정보로 등록
   const handlePost = () => {
     if (newComment.trim() === '') return;
+
     const newItem = {
-      profileImage: '/Avatar.svg',
-      username: 'oktorot0',
+      profileImage: profileImage || '/Avatar.svg',
+      username: name || '익명 사용자',
       content: newComment,
     };
+
     setComments([...comments, newItem]);
     setNewComment('');
   };
 
-  const handleLikeToggle = () => {
-    setIsLiked(currentValue => !currentValue);
+  // ✅ 게시물 삭제
+  const handleDelete = async () => {
+    if (!window.confirm('정말로 이 게시물을 삭제하시겠습니까?')) return;
+    try {
+      await fetch(`${MOCK_API_URL}/${post.id}`, { method: 'DELETE' });
+      alert('🗑 게시물이 삭제되었습니다.');
+      onClose(); // 모달 닫기
+    } catch (err) {
+      console.error('삭제 오류:', err);
+      alert('⚠ 게시물 삭제 중 오류가 발생했습니다.');
+    }
   };
 
-  // 로딩 및 에러 상태에 따른 UI 렌더링
-  const renderContent = () => {
-    if (isLoading) {
-      return <div className={styles.status}>로딩 중...</div>;
-    }
-    if (error) {
-      return <div className={styles.status}>오류: {error}</div>;
-    }
-    if (!post) {
-      return <div className={styles.status}>게시물 정보가 없습니다.</div>;
-    }
 
-    // 데이터 로딩 성공 시 실제 모달 컨텐츠 렌더링
-    return (
+  // ✅ 수정 페이지 이동
+  const handleEdit = () => {
+    navigate(`/edit/${post.id}`);
+  };
+
+  if (!post) return null;
+
+  return (
+    
+    <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+        {/* 좌측: 이미지 */}
         <div className={styles.imageSection}>
-          <img src={post.image} alt={post.title} />
+          <img src={post.image} alt={post.title || '게시물'} />
         </div>
-        
+
+        {/* 우측: 내용 + 댓글 */}
         <div className={styles.commentSection}>
           <div className={styles.userInfo}>
-            <img 
-              src={post.isAnon ? '/Avatar.svg' : (post.avatar || '/Avatar.svg')} 
-              className={styles.commentAvatar} 
-              alt="유저" 
-            />
-            <span>{post.isAnon ? '익명' : (post.author || '작성자')}</span>
-            <img src="/Other.svg" className={styles.other} alt="옵션" onClick={() => setShowDropdown(!showDropdown)} />
-            {showDropdown && (
-              <div className={styles.dropdown}>
-                <button onClick={handleEdit}>Edit</button>
-                <button onClick={handleDelete} className={styles.deleteButton}>Delete</button>
-              </div>
-            )}
-          </div>
-          
-          <div className={styles.comments}>
-            <div className={styles.postContent}>
-              <p>{post.content}</p>
+            <img src={profileImage || '/Avatar.svg'} className={styles.commentAvatar} alt="유저" />
+            <span>{name || post.author || '익명'}</span>
+
+            {/* 🔹 햄버거 바 */}
+            <div className={styles.moreWrapper}>
+              <button
+                className={styles.moreBtn}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowMenu(!showMenu);
+                }}
+              >
+                ⋯
+              </button>
+
+              {showMenu && (
+                <div className={styles.dropdownMenu}>
+                  <button onClick={handleEdit}>수정</button>
+                  <button onClick={handleDelete}>삭제</button>
+                </div>
+              )}
             </div>
-            {comments.map((c, i) => (
-              <div key={i} className={styles.commentItem}>
-                <img src={c.profileImage} className={styles.commentAvatar} alt="유저" />
-                <span className={styles.name}>{c.username}</span>
-                <p className={styles.content}>{c.content}</p>
-              </div>
-            ))}
           </div>
 
+          {/* 게시물 정보 */}
+          <div className={styles.postDetail}>
+            <h2 className={styles.postTitle}>{post.title}</h2>
+            <p className={styles.postContent}>{post.content}</p>
+
+            <div className={styles.postMeta}>
+              <span>🕓 {new Date(post.createdAt).toLocaleString()}</span>
+            </div>
+          </div>
+
+          <hr className={styles.divider} />
+
+          {/* 댓글 목록 */}
+          <div className={styles.comments}>
+            {comments.length === 0 ? (
+              <p className={styles.noComment}>아직 댓글이 없습니다.</p>
+            ) : (
+              comments.map((c, i) => (
+                <div key={i} className={styles.commentItem}>
+                  <img src={c.profileImage} className={styles.commentAvatar} alt="유저" />
+                  <span className={styles.name}>{c.username}</span>
+                  <p className={styles.content}>{c.content}</p>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* 좋아요 & 액션 아이콘 */}
           <div className={styles.iconBar}>
             <img
-              src={isLiked ? '/reallove.svg' : '/Love.png'}
+              src={liked ? '/reallove.svg' : '/Love.png'}
               className={styles.commentbar}
               alt="좋아요"
               onClick={(e) => {
                 e.stopPropagation();
-                handleLikeToggle();
+                onLikeToggle();
               }}
             />
             <img src="/comment.jpg" className={styles.commentbar} alt="댓글" />
@@ -149,6 +130,7 @@ export default function ImageModal({ postId, onClose, onDeleteSuccess }) {
             <img src="/Post.jpg" className={styles.commentpostbar} alt="저장" />
           </div>
 
+          {/* 댓글 입력 */}
           <div className={styles.commentInput}>
             <input
               type="text"
@@ -161,15 +143,8 @@ export default function ImageModal({ postId, onClose, onDeleteSuccess }) {
               게시
             </button>
           </div>
-
         </div>
       </div>
-    );
-  };
-
-  return (
-    <div className={styles.overlay} onClick={onClose}>
-      {renderContent()}
     </div>
   );
 }

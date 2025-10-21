@@ -1,65 +1,37 @@
-import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useForm } from 'react-hook-form';
 import styles from '../styles/thread.module.css';
-import { useUserStore } from '../store/userStore'; // ✅ zustand에서 가져오기
+import { useUserStore } from '../store/userStore';
 
-// 👇 MockAPI 엔드포인트 (리소스 이름이 post 라고 가정)
+// MockAPI URL
 const MOCK_API_URL = 'https://68ec478eeff9ad3b1401a745.mockapi.io/post';
 
-// 🧱 파일 상단 밖으로 빼기!
-function InputField({ id, label, value, onChange, placeholder, required }) {
-  return (
-    <div className={styles.formGroup}>
-      <label htmlFor={id}>{label}</label>
-      <input
-        id={id}
-        type="text"
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        required={required}
-        className={styles.input}
-      />
-    </div>
-  );
-}
-
-
 export default function CreatePost() {
-  const [formData, setFormData] = useState({
-    title: '',
-    content: '',
-    isAnon: false,
-  });
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-
-  // ✅ Zustand에서 현재 로그인한 사용자 이름 가져오기
   const username = useUserStore((state) => state.name);
 
-  /** ✏️ 입력값 변경 핸들러 */
-  const handleChange = (e) => {
-    const { id, value } = e.target;
-    setFormData((prev) => ({ ...prev, [id]: value }));
-  };
+  // 🪄 react-hook-form 기본 설정
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { isSubmitting, errors },
+  } = useForm({
+    defaultValues: {
+      title: '',
+      content: '',
+      isAnon: false,
+    },
+  });
 
-  /** 🕹 익명 토글 핸들러 */
-  const handleAnonToggle = () => {
-    setFormData((prev) => ({ ...prev, isAnon: !prev.isAnon }));
-  };
-
-  /** 📨 axios로 게시물 등록 */
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (isLoading) return;
-    setIsLoading(true);
-
+  /** 📨 게시물 전송 함수 */
+  const onSubmit = async (data) => {
     const newPost = {
-      title: formData.title,
-      content: formData.content,
-      isAnon: String(formData.isAnon), // ⚠ MockAPI 스키마에 따라 문자열로 전송
-      author: formData.isAnon ? '익명' : username,
+      title: data.title,
+      content: data.content,
+      isAnon: String(data.isAnon),
+      author: data.isAnon ? '익명' : username || '작성자없음',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       likes: 0,
@@ -68,73 +40,69 @@ export default function CreatePost() {
     try {
       const res = await axios.post(MOCK_API_URL, newPost);
       console.log('서버 응답:', res.data);
-
-      alert('게시물이 성공적으로 등록되었습니다!');
+      alert('✅ 게시물이 성공적으로 등록되었습니다!');
+      reset(); // 입력값 초기화
       navigate('/mypage');
     } catch (error) {
-      console.error('게시물 등록 중 오류 발생:', error);
-      alert('게시물 등록 중 오류가 발생했습니다.');
-    } finally {
-      setIsLoading(false);
+      console.error('게시물 등록 중 오류:', error);
+      alert('⚠ 게시물 등록 중 오류가 발생했습니다.');
     }
   };
-
-  /** 🧱 재사용 가능한 입력 필드 */
-  const InputField = ({ id, label, placeholder, required }) => (
-    <div className={styles.formGroup}>
-      <label htmlFor={id}>{label}</label>
-      <input
-        id={id}
-        type="text"
-        value={formData[id]}
-        onChange={handleChange}
-        placeholder={placeholder}
-        required={required}
-        className={styles.input}
-      />
-    </div>
-  );
 
   return (
     <div className={styles.container}>
       <h1>Hanstagram</h1>
       <h2>글 남기기</h2>
 
-      <form onSubmit={handleSubmit} className={styles.form}>
-            <InputField
-            id="title"
-            label="제목"
-            value={formData.title}
-            onChange={handleChange}
-            placeholder="제목을 입력하세요"
-            required
-            />
+      <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+        {/* 제목 입력 */}
         <div className={styles.formGroup}>
-          <label htmlFor="content">내용</label>
-          <textarea
-            id="content"
-            value={formData.content}
-            onChange={handleChange}
-            placeholder="내용을 입력하세요"
-            required
-            rows="10"
-            className={styles.textarea}
+          <label>
+            <span className="badge text-bg-secondary">제목</span>
+          </label>
+          <input
+            type="text"
+            placeholder="제목을 입력하세요"
+            className={styles.input}
+            {...register('title', { required: '제목은 필수입니다.' })}
           />
+          {errors.title && <p className="text-danger small">{errors.title.message}</p>}
         </div>
 
+        {/* 내용 입력 */}
+        <div className={styles.formGroup}>
+          <label>
+            <span className="badge text-bg-secondary">내용</span>
+          </label>
+          <textarea
+            rows="10"
+            placeholder="내용을 입력하세요"
+            className={styles.textarea}
+            {...register('content', { required: '내용은 필수입니다.' })}
+          />
+          {errors.content && <p className="text-danger small">{errors.content.message}</p>}
+        </div>
+
+        {/* 익명 옵션 */}
         <div className={styles.formGroup}>
           <label>
             <input
               type="checkbox"
-              checked={formData.isAnon}
-              onChange={handleAnonToggle}
+              {...register('isAnon')}
             />
-            익명으로 게시하기
+            <span className="badge text-bg-secondary ms-2">
+              익명으로 게시하기
+            </span>
           </label>
         </div>
 
-        <button type="submit" disabled={isLoading} className={styles.submitButton}>
-          {isLoading ? '게시 중...' : '게시하기'}
+        {/* 전송 버튼 */}
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className={styles.submitButton}
+        >
+          {isSubmitting ? '게시 중...' : '게시하기'}
         </button>
       </form>
     </div>

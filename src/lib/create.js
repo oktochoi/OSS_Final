@@ -2,20 +2,34 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../styles/CreatePost.module.css';
 
-export default function CreatePost() {
+export default function CreatePostLib() {
   const [title, setTitle] = useState('');
-  const [image, setImage] = useState(''); // 이미지 URL을 저장할 상태
+  const [image, setImage] = useState(null); // 실제 File 객체
+  const [preview, setPreview] = useState(null); // 미리보기 URL
   const [content, setContent] = useState('');
-  const [isAnon, setAnon] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
-  const navigate = useNavigate(); // 페이지 이동을 위한 hook
 
-  const MOCK_API_URL = 'https://68db332b23ebc87faa323c66.mockapi.io/Hanstagram'; //mockAPI 주소
+  const [isAnon, setIsAnon] = useState(false); // ✅ 익명 여부
+  const [likes, setLikes] = useState(0); // ✅ 좋아요 수 직접 입력 가능
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
+  const MOCK_API_URL = 'https://68db332b23ebc87faa323c66.mockapi.io/Hanstagram';
+
+  /** 📸 이미지 파일 선택 시 미리보기 */
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImage(file);
+      const previewUrl = URL.createObjectURL(file); // 로컬 미리보기 URL 생성
+      setPreview(previewUrl);
+    }
+  };
+  console.log(image);
+
+  /** 📨 제출 */
   const handleSubmit = async (e) => {
-    e.preventDefault(); // 폼 제출 시 페이지가 새로고침되는 것을 방지
-
-    if (isLoading) return; // 이미 제출 중이면 중복 실행 방지
+    e.preventDefault();
+    if (isLoading) return;
     setIsLoading(true);
 
     // API로 보낼 새로운 게시물 데이터 객체
@@ -27,36 +41,47 @@ export default function CreatePost() {
       likes: 0, // 새 게시물이므로 '좋아요'는 0으로 시작
       isAnon: isAnon
     };
-
+    
     try {
+      // MockAPI는 파일 업로드를 지원하지 않으므로 URL만 전송
+      const imageUrl = preview || '';
+
+      const newPost = {
+        title,
+        image: imageUrl,
+        content,
+        createdAt: new Date().toISOString(),
+        likes: Number(likes) || 0, // ✅ 직접 입력한 좋아요 수
+        isAnon: String(isAnon), // ✅ true/false → 문자열로
+      };
+
       const response = await fetch(MOCK_API_URL, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newPost),
       });
 
       if (!response.ok) {
-        throw new Error('데이터 전송에 실패했습니다.');
+        throw new Error('데이터 전송 실패');
       }
 
-      alert('게시물이 성공적으로 등록되었습니다!');
-      navigate('/mypage'); // 성공 시 홈으로 이동
-      
+      alert('✅ 게시물이 성공적으로 등록되었습니다!');
+      navigate('/mypage');
     } catch (error) {
-      console.error('게시물 등록 중 오류 발생:', error);
-      alert('게시물 등록 중 오류가 발생했습니다.');
+      console.error('게시물 등록 오류:', error);
+      alert('⚠ 게시물 등록 중 오류가 발생했습니다.');
     } finally {
-      setIsLoading(false); // 로딩 상태 해제
+      setIsLoading(false);
     }
   };
 
   return (
     <div className={styles.container}>
-      <h1> Hastagram </h1>
+      <h1>Hanstagram</h1>
       <h2>새 게시물 만들기</h2>
+
       <form onSubmit={handleSubmit} className={styles.form}>
+        {/* 제목 */}
         <div className={styles.formGroup}>
           <label htmlFor="title">제목</label>
           <input
@@ -69,30 +94,41 @@ export default function CreatePost() {
             className={styles.input}
           />
         </div>
+
+        {/* 이미지 업로드 */}
         <div className={styles.formGroup}>
-          <label htmlFor="image">이미지 URL</label>
+          <label htmlFor="image">이미지 업로드</label>
           <input
             id="image"
-            type="url"
-            value={image}
-            onChange={(e) => setImage(e.target.value)}
-            placeholder="이미지 주소를 붙여넣으세요"
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
             required
-            className={styles.input}
+            className={styles.inputFile}
           />
         </div>
+
+        {/* 이미지 미리보기 */}
+        {preview && (
+          <div className={styles.previewWrapper}>
+            <img src={preview} alt="미리보기" className={styles.previewImage} />
+          </div>
+        )}
+
+        {/* 내용 */}
         <div className={styles.formGroup}>
           <label htmlFor="content">내용</label>
           <textarea
             id="content"
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder="캡션 추가..."
+            placeholder="캡션을 입력하세요..."
             required
-            rows="10"
+            rows="8"
             className={styles.textarea}
           />
         </div>
+<<<<<<< HEAD
         <div className={styles.formGroup}>
           <label htmlFor="content">익명표시</label>
           <input 
@@ -104,6 +140,40 @@ export default function CreatePost() {
           />
         </div>
         <button type="submit" disabled={isLoading} className={styles.submitButton}>
+=======
+
+        {/* ✅ 익명 여부 */}
+        <div className={styles.formGroupCheckbox}>
+          <label >
+              익명으로 게시하기
+            <input
+              type="checkbox"
+              checked={isAnon}
+              onChange={() => setIsAnon(!isAnon)}
+            />
+          </label>
+        </div>
+
+        {/* ✅ 좋아요 초기값 입력 */}
+        <div className={styles.formGroup}>
+          <label htmlFor="likes">좋아요 수 (초기값)</label>
+          <input
+            id="likes"
+            type="number"
+            min="0"
+            value={likes}
+            onChange={(e) => setLikes(e.target.value)}
+            className={styles.input}
+          />
+        </div>
+
+        {/* 게시 버튼 */}
+        <button
+          type="submit"
+          disabled={isLoading}
+          className={styles.submitButton}
+        >
+>>>>>>> d6d99d76eb998acc830bbcfb94149d185db54f69
           {isLoading ? '게시 중...' : '게시하기'}
         </button>
       </form>

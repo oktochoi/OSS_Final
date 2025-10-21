@@ -9,7 +9,7 @@ const POST_API = 'https://68db332b23ebc87faa323c66.mockapi.io/Hanstagram';
 export default function SearchPage() {
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedPostId, setSelectedPostId] = useState(null);
+  const [selectedPost, setSelectedPost] = useState(null);
 
   const [searchParams] = useSearchParams();
   const query = searchParams.get('q');
@@ -24,7 +24,7 @@ export default function SearchPage() {
 
       setIsLoading(true);
       try {
-        const response = await fetch(`${POST_API}?title=${encodeURIComponent(query)}`);
+        const response = await fetch(POST_API);
         if (!response.ok) {
           throw new Error('데이터를 불러오는 데 실패했습니다.');
         }
@@ -64,7 +64,7 @@ export default function SearchPage() {
           <section className={styles.gridSection}>
             <div className={styles.grid}>
               {posts.map((post) => (
-                <div key={post.id} className={styles.post} onClick={() => setSelectedPostId(post.id)}>
+                <div key={post.id} className={styles.post} onClick={() => setSelectedPost(post)}>
                   <img src={post.image} alt={post.title} />
                   <div className={styles.overlay}>
                     <span className={styles.lc}>
@@ -81,10 +81,10 @@ export default function SearchPage() {
         )}
       </main>
 
-      {selectedPostId && (
+      {selectedPost && (
         <ImageModal
-          postId={selectedPostId}
-          onClose={() => setSelectedPostId(null)}
+          post={selectedPost} 
+          onClose={() => setSelectedPost(null)}
           onDeleteSuccess={removePostFromState}
         />
       )}

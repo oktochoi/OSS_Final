@@ -33,9 +33,7 @@ export default function HomePage() {
   const [selectedThread, setSelectedThread] = useState(null);
   const navigate = useNavigate();
 
-  const [isLoading, setIsLoading] = useState(true);
   const [selectedPostId, setSelectedPostId] = useState(null); // 선택된 게시물의 ID를 저장
-  const [likedPosts, setLikedPosts] = useState({});
 
   // ❤️ 좋아요 토글
   const toggleLike = (src) => {
@@ -84,9 +82,11 @@ export default function HomePage() {
       } catch (error) {
         console.error(error);
         alert(error.message);
-      } finally {
-        setIsLoading(false);
-      }
+      } 
+  };
+
+  const removePostFromState = (deletedPostId) => {
+    setPosts(currentPosts => currentPosts.filter(post => post.id !== deletedPostId));
   };
 
   useEffect(() => {

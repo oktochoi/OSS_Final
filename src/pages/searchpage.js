@@ -29,7 +29,13 @@ export default function SearchPage() {
           throw new Error('데이터를 불러오는 데 실패했습니다.');
         }
         const data = await response.json();
-        setPosts(data.reverse()); 
+        const lowerCaseQuery = query.toLowerCase();
+        
+        const filteredPosts = data.filter(post => 
+          post.title && post.title.toLowerCase().includes(lowerCaseQuery)
+        );
+
+        setPosts(filteredPosts.reverse());
       } catch (error) {
         console.error(error);
         alert(error.message);

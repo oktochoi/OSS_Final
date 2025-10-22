@@ -7,6 +7,7 @@ import CreatePost from './pages/thread';
 import CreatePostLib from './lib/create'
 import EditPost from './lib/edit';
 import AllThread from './pages/allthread';
+import SearchPage from './pages/searchpage';
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
       <Route path="/create" element={ <CreatePostLib /> } /> 
       <Route path="/edit/:postId" element={<EditPost />} />
       <Route path="/allthread" element={<AllThread />} />
+      <Route path="/search" element={<SearchPage />} />
     </Routes>
   )
 }

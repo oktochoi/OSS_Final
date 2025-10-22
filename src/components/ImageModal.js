@@ -63,8 +63,14 @@ export default function ImageModal({ post, onClose, liked, onLikeToggle }) {
         {/* 우측: 내용 + 댓글 */}
         <div className={styles.commentSection}>
           <div className={styles.userInfo}>
-            <img src={profileImage || '/Avatar.svg'} className={styles.commentAvatar} alt="유저" />
-            <span>{name || post.author || '익명'}</span>
+            <img 
+              src={(post.isAnon === true || post.isAnon === "true") ? '/Avatar.svg' : (profileImage || '/Avatar.svg')} 
+              className={styles.commentAvatar} 
+              alt="작성자" 
+            />
+            <span>
+              {(post.isAnon === true || post.isAnon === "true") ? '익명' : name}
+            </span>
 
             {/* 🔹 햄버거 바 */}
             <div className={styles.moreWrapper}>
